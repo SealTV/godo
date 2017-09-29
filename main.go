@@ -1,8 +1,8 @@
 package main
 
 import (
-	"./data"
-	"./server"
+	"go-site/data"
+	"go-site/server"
 )
 
 func main() {
