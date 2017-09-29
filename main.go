@@ -1,8 +1,8 @@
 package main
 
 import (
-	"web_site/data"
-	"web_site/server"
+	"./data"
+	"./server"
 )
 
 func main() {
