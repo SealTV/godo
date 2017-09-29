@@ -1,8 +1,8 @@
 package main
 
 import (
-	"go-site/data"
-	"go-site/server"
+	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/server"
 )
 
 func main() {
