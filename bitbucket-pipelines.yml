@@ -16,3 +16,5 @@ pipelines:
           - go get -v
           - go build -v
           - go test -v
+          - go test -v bitbucket.org/SealTV/go-site/tools
+          - go test -bench=.  bitbucket.org/SealTV/go-site/tools
