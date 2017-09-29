@@ -1,13 +1,24 @@
-package web_server
+package server
 
 import (
 	"database/sql"
+
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"net/http"
 )
 
 func RunServer(db *sql.DB) {
 	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
+	e.Use(middleware.BasicAuth(func(username, password string, c echo.Context) (bool, error) {
+		if username == "joe" && password == "secret" {
+			return true, nil
+		}
+		return false, nil
+	}))
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello world")
 	})

@@ -1,4 +1,4 @@
-package web_server
+package server
 
 import (
 	"database/sql"

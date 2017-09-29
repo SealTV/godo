@@ -17,9 +17,7 @@ type Todo struct {
 	UserId      int       `db:"user_id" json:"user_id"`
 }
 
-type TodoCollection struct {
-	Todo []Todo `json:"items"`
-}
+type TodoCollection []Todo
 
 func GetAllTodos(db *sql.DB) TodoCollection {
 	rows, err := db.Query("SELECT * FROM todos")
@@ -64,7 +62,7 @@ func AddTodo(db *sql.DB, todo Todo) Todo {
 func UpdateTodo(db *sql.DB, todo Todo) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE todos
-				SET title  = $2, description = $3, list_id = $4, is_active = $5, user_id = $6
+				SET title = $2, description = $3, list_id = $4, is_active = $5, user_id = $6
 				WHERE id = $1`,
 		todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId)
 	if err != nil {
@@ -91,7 +89,7 @@ func parseTodoRows(rows *sql.Rows) TodoCollection {
 			log.Fatal(err)
 		}
 
-		result.Todo = append(result.Todo, todo)
+		result = append(result, todo)
 	}
 	return result
 }

@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"fmt"
 	_ "github.com/lib/pq"
+	"log"
 )
 
 const (
@@ -17,7 +18,7 @@ const (
 func IniDB() *sql.DB {
 	db, err := sql.Open("postgres", getConnectionSating())
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
 	// если ошибок нет, но не можем подключиться к базе данных,
@@ -28,9 +29,23 @@ func IniDB() *sql.DB {
 
 	_, err = db.Exec(fmt.Sprintf("SET search_path TO %s;", DB_DEFAULT_SCHEMA))
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 
+	todo := Todo{
+		UserId:      1,
+		IsActive:    true,
+		Description: "some description",
+		ListId:      1,
+		Title:       "Som title",
+	}
+
+	todo = AddTodo(db, todo)
+	todo.Title = "Another title 2"
+	UpdateTodo(db, todo)
+	DeleteTodo(db, todo)
+	todo.Id = 5
+	DeleteTodo(db, todo)
 	return db
 }
 
@@ -40,7 +55,7 @@ func getConnectionSating() string {
 }
 
 func migrate(db *sql.DB) {
-	sql := `
+	sql, err := db.Prepare(`
     create sequence todos_id_seq;
 	create sequence users_id_seq;
 	create sequence lists_id_seq;
@@ -115,10 +130,10 @@ func migrate(db *sql.DB) {
 	alter table todos
 		add constraint todos_lists_id_fk
 			foreign key (list_id) references lists;
-    `
-	_, err := db.Exec(sql)
+    `)
+	_, err = sql.Exec()
 	// выходим, если будут ошибки с SQL запросом выше
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
 	}
 }

@@ -1,12 +1,11 @@
 package main
 
 import (
-	_ "github.com/lib/pq"
 	"web_site/data"
-	"web_site/web_server"
+	"web_site/server"
 )
 
 func main() {
 	db := data.IniDB()
-	web_server.RunServer(db)
+	server.RunServer(db)
 }
