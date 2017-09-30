@@ -27,38 +27,38 @@ func GetAllUsers(db *sql.DB) UsersCollection {
 	return parseUserRows(rows)
 }
 
-func GetUserById(db *sql.DB, id int) User {
+func GetUserById(db *sql.DB, id int) (User, error) {
 	var user User
 	err := db.QueryRow(`SELECT * FROM users WHERE id = $1 LIMIT 1`, id).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
 
 	if err != nil {
-		log.Fatal(err)
+		return user, err
 	}
-	return user
+	return user, nil
 }
 
-func GetUserByLoginAndPassword(db *sql.DB, login, password string) User {
+func GetUserByLoginAndPassword(db *sql.DB, login, password string) (User, error) {
 	var user User
 	err := db.QueryRow(`SELECT * FROM users WHERE (login = $1 OR email = $1) AND password = $2 LIMIT 1`, login, password).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
 
 	if err != nil {
-		log.Fatal(err)
+		return user, err
 	}
-	return user
-
+	return user, nil
 }
 
-func AddUser(db *sql.DB, user User) User {
+func AddUser(db *sql.DB, user User) (User, error) {
 	err := db.QueryRow(`INSERT
 			INTO users(login, password, email)
 			VALUES ($1, $2, $3)
 			RETURNING id, register_date;`).Scan(&user.Id, &user.RegisterDate)
+
 	if err != nil {
-		log.Fatal(err)
+		return user, err
 	}
-	return user
+	return user, nil
 }
 
 func UpdateUser(db *sql.DB, user User) (int64, error) {
