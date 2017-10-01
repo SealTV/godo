@@ -1,4 +1,4 @@
-package server
+package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
@@ -6,17 +6,45 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
+	"gopkg.in/go-playground/validator.v8"
 	"log"
 	"net/http"
 	"time"
 )
 
-type JwtClaims struct {
-	Name string `json:"name"`
-	jwt.StandardClaims
+type (
+	JwtClaims struct {
+		Name string `json:"name"`
+		jwt.StandardClaims
+	}
+	user struct {
+		Name     string `json:"name" form:"name" query:"name" validate:"required"`
+		Email    string `json:"email" form:"email" query:"email" validate:"required, email"`
+		Password string `json:"password" form:"password" query:"password"`
+	}
+
+	CustomValidator struct {
+		validator *validator.Validate
+	}
+)
+
+func Register(db *sql.DB) echo.HandlerFunc {
+	return func(c echo.Context) error {
+		u := data.User{
+			Login:    c.FormValue("name"),
+			Email:    c.FormValue("email"),
+			Password: c.FormValue("password"),
+		}
+		u, err := data.AddUser(db, u)
+		if err != nil {
+			return echo.ErrUnauthorized
+		}
+
+		return c.String(http.StatusOK, "Rigesterd")
+	}
 }
 
-func login(db *sql.DB) echo.HandlerFunc {
+func Login(db *sql.DB) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		username := c.QueryParam("username")
 		password := c.QueryParam("password")
@@ -54,13 +82,12 @@ func login(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func mainJwt(c echo.Context) error {
+func MainJwt(c echo.Context) error {
 	user := c.Get("user")
 	token := user.(*jwt.Token)
-
 	claims := token.Claims.(jwt.MapClaims)
 
-	log.Println("User Name: ", claims["name"], "User ID: ", claims["jti"])
+	log.Println("User Name: ", claims["name"], "User ID: ", claims["jti"], "Token valid: ", token.Valid)
 
 	return c.String(http.StatusOK, "you are on the top secret jwt page!")
 }

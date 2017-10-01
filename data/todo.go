@@ -72,7 +72,11 @@ func UpdateTodo(db *sql.DB, todo Todo) (int64, error) {
 }
 
 func DeleteTodo(db *sql.DB, todo Todo) (int64, error) {
-	r, err := db.Exec(`DELETE FROM todos WHERE id = $1`, todo.Id)
+	return DeleteTodoById(db, todo.Id)
+}
+
+func DeleteTodoById(db *sql.DB, id int) (int64, error) {
+	r, err := db.Exec(`DELETE FROM todos WHERE id = $1`, id)
 	if err != nil {
 		log.Fatal(err)
 	}

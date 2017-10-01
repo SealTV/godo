@@ -2,7 +2,9 @@ package data
 
 import (
 	"database/sql"
+	"github.com/SealTV/handmade-shope/db"
 	"log"
+	"os/user"
 )
 
 type List struct {
@@ -24,12 +26,26 @@ func GetAllLists(db *sql.DB) ListsCollection {
 }
 
 func GetAllListsForUser(db *sql.DB, user User) ListsCollection {
-	rows, err := db.Query("SELECT * FROM lists WHERE user_id = $1", user.Id)
+	return GetAllListsForUserId(db, user.Id)
+}
+
+func GetAllListsForUserId(db *sql.DB, user int) ListsCollection {
+	rows, err := db.Query("SELECT * FROM lists WHERE user_id = $1", user)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer rows.Close()
 	return parseListsRows(rows)
+}
+
+func GetListById(db *sql.DB, id int) (List, error) {
+	var list List
+	err := db.QueryRow(`SELECT * FROM lists WHERE id = $1`, id).Scan(&list.Id, &list.Name, &list.UserId)
+	if err != nil {
+		return list, err
+	}
+
+	return list, nil
 }
 
 func AddList(db *sql.DB, list List) List {
@@ -58,9 +74,25 @@ func UpdateList(db *sql.DB, list List) (int64, error) {
 }
 
 func DeleteList(db *sql.DB, list List) (int64, error) {
-	r, err := db.Exec(`DELETE FROM lists WHERE id = $1`, list.Id)
+	return DeleteListById(db, list.Id)
+}
+
+func DeleteListById(db *sql.DB, list int) (int64, error) {
+	tx, err := db.Begin()
+	r, err := tx.Exec(`DELETE FROM todos WHERE list_id = $1`, list)
 	if err != nil {
-		log.Fatal(err)
+		tx.Rollback()
+		return 0, err
+	}
+	r, err = tx.Exec(`DELETE FROM lists WHERE id = $1`, list)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
+		return 0, err
 	}
 	return r.RowsAffected()
 }

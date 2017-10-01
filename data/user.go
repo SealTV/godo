@@ -53,7 +53,8 @@ func AddUser(db *sql.DB, user User) (User, error) {
 	err := db.QueryRow(`INSERT
 			INTO users(login, password, email)
 			VALUES ($1, $2, $3)
-			RETURNING id, register_date;`).Scan(&user.Id, &user.RegisterDate)
+			RETURNING id, register_date;`,
+		user.Login, user.Password, user.Email).Scan(&user.Id, &user.RegisterDate)
 
 	if err != nil {
 		return user, err
@@ -74,7 +75,11 @@ func UpdateUser(db *sql.DB, user User) (int64, error) {
 }
 
 func DeleteUser(db *sql.DB, user User) (int64, error) {
-	r, err := db.Exec(`DELETE FROM users WHERE id = $1`, user.Id)
+	return DeleteUserById(db, user.Id)
+}
+
+func DeleteUserById(db *sql.DB, user int) (int64, error) {
+	r, err := db.Exec(`DELETE FROM users WHERE id = $1`, user)
 	if err != nil {
 		log.Fatal(err)
 	}
