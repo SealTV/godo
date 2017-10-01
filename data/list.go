@@ -2,9 +2,7 @@ package data
 
 import (
 	"database/sql"
-	"github.com/SealTV/handmade-shope/db"
 	"log"
-	"os/user"
 )
 
 type List struct {
