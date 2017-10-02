@@ -2,20 +2,19 @@ package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
-	"database/sql"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"net/http"
 	"strconv"
 )
 
-func GetUser(db *sql.DB) echo.HandlerFunc {
+func GetUser(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user").(*jwt.Token)
 		claims := token.Claims.(jwt.MapClaims)
 
 		id, _ := strconv.Atoi(claims["jti"].(string))
-		user, err := data.GetUserById(db, int(id))
+		user, err := db.GetUserById(id)
 
 		if err != nil {
 			return c.String(http.StatusBadRequest, "User not found")
@@ -25,13 +24,13 @@ func GetUser(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func GetUserModel(db *sql.DB) echo.HandlerFunc {
+func GetUserModel(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		token := c.Get("user").(*jwt.Token)
 		claims := token.Claims.(jwt.MapClaims)
 
 		id, _ := strconv.Atoi(claims["jti"].(string))
-		user, err := data.GetUserModel(db, id)
+		user, err := db.GetUserModel(id)
 
 		if err != nil {
 			return c.String(http.StatusBadRequest, "User not found")
@@ -41,14 +40,14 @@ func GetUserModel(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func UpdateUser(db *sql.DB) echo.HandlerFunc {
+func UpdateUser(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		user := new(data.User)
 		if err := c.Bind(user); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
 
-		result, err := data.UpdateUser(db, *user)
+		result, err := db.UpdateUser(*user)
 		if err != nil {
 			return c.String(http.StatusFailedDependency, err.Error())
 		}
@@ -56,8 +55,17 @@ func UpdateUser(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func DeleteUser(db *sql.DB) echo.HandlerFunc {
+func DeleteUser(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "DeleteUser")
+		user := new(data.User)
+		if err := c.Bind(user); err != nil {
+			c.String(http.StatusFailedDependency, "Invalid value")
+		}
+
+		result, err := db.DeleteUser(*user)
+		if err != nil {
+			return c.String(http.StatusFailedDependency, err.Error())
+		}
+		return c.JSON(http.StatusOK, H{"DeleteUser": result})
 	}
 }

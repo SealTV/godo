@@ -1,23 +1,9 @@
 package data
 
-import (
-	"database/sql"
-	"fmt"
-)
-
-type UserModel struct {
-	User
-	TodoLists []TodoListModel
-}
-type TodoListModel struct {
-	List
-	Todos TodoCollection
-}
-
-func GetUserModel(db *sql.DB, id int) (UserModel, error) {
+func (db *PostgresConnector) GetUserModel(id int) (UserModel, error) {
 	var userModel UserModel
 	var user User
-	user, err := GetUserById(db, id)
+	user, err := db.GetUserById(id)
 	if err != nil {
 		return userModel, err
 	}
@@ -44,7 +30,6 @@ func GetUserModel(db *sql.DB, id int) (UserModel, error) {
 		}
 		todo.ListId = listId
 
-		fmt.Println("add to list", listName, todo.Id)
 		list, ok := lists[listId]
 		if !ok {
 			list.List = List{
@@ -59,7 +44,6 @@ func GetUserModel(db *sql.DB, id int) (UserModel, error) {
 	}
 
 	for _, v := range lists {
-		fmt.Println(len(v.Todos))
 		userModel.TodoLists = append(userModel.TodoLists, v)
 	}
 

@@ -5,16 +5,7 @@ import (
 	"log"
 )
 
-type List struct {
-	Id     int    `db:"id"`
-	Name   string `db:"name"`
-	UserId int    `db:"user_id"`
-}
-type ListsCollection struct {
-	lists []List `json:"lists"`
-}
-
-func GetAllLists(db *sql.DB) ListsCollection {
+func (db *PostgresConnector) GetAllLists() (ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists")
 	if err != nil {
 		log.Fatal(err)
@@ -23,11 +14,11 @@ func GetAllLists(db *sql.DB) ListsCollection {
 	return parseListsRows(rows)
 }
 
-func GetAllListsForUser(db *sql.DB, user User) ListsCollection {
-	return GetAllListsForUserId(db, user.Id)
+func (db *PostgresConnector) GetAllListsForUser(user User) (ListsCollection, error) {
+	return db.GetAllListsForUserId(user.Id)
 }
 
-func GetAllListsForUserId(db *sql.DB, user int) ListsCollection {
+func (db *PostgresConnector) GetAllListsForUserId(user int) (ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists WHERE user_id = $1", user)
 	if err != nil {
 		log.Fatal(err)
@@ -36,7 +27,7 @@ func GetAllListsForUserId(db *sql.DB, user int) ListsCollection {
 	return parseListsRows(rows)
 }
 
-func GetListById(db *sql.DB, id int) (List, error) {
+func (db *PostgresConnector) GetListById(id int) (List, error) {
 	var list List
 	err := db.QueryRow(`SELECT * FROM lists WHERE id = $1`, id).Scan(&list.Id, &list.Name, &list.UserId)
 	if err != nil {
@@ -46,20 +37,20 @@ func GetListById(db *sql.DB, id int) (List, error) {
 	return list, nil
 }
 
-func AddList(db *sql.DB, list List) List {
+func (db *PostgresConnector) AddList(list List) (List, error) {
 	err := db.QueryRow(`INSERT
 			INTO lists(name, user_id)
 			VALUES($1, $2)
 			RETURNING id;`,
 		list.Name, list.UserId).Scan(&list.Id)
 	if err != nil {
-		log.Fatal(err)
+		return list, err
 	}
 
-	return list
+	return list, nil
 }
 
-func UpdateList(db *sql.DB, list List) (int64, error) {
+func (db *PostgresConnector) UpdateList(list List) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE lists
 				SET name = $2, user_id = $3
@@ -71,11 +62,11 @@ func UpdateList(db *sql.DB, list List) (int64, error) {
 	return r.RowsAffected()
 }
 
-func DeleteList(db *sql.DB, list List) (int64, error) {
-	return DeleteListById(db, list.Id)
+func (db *PostgresConnector) DeleteList(list List) (int64, error) {
+	return db.DeleteListById(list.Id)
 }
 
-func DeleteListById(db *sql.DB, list int) (int64, error) {
+func (db *PostgresConnector) DeleteListById(list int) (int64, error) {
 	tx, err := db.Begin()
 	r, err := tx.Exec(`DELETE FROM todos WHERE list_id = $1`, list)
 	if err != nil {
@@ -95,17 +86,17 @@ func DeleteListById(db *sql.DB, list int) (int64, error) {
 	return r.RowsAffected()
 }
 
-func parseListsRows(rows *sql.Rows) ListsCollection {
+func parseListsRows(rows *sql.Rows) (ListsCollection, error) {
 	result := ListsCollection{}
 	for rows.Next() {
 		list := List{}
 
 		err := rows.Scan(&list.Id, &list.Name, &list.UserId)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
-		result.lists = append(result.lists, list)
+		result = append(result, list)
 	}
-	return result
+	return result, nil
 }

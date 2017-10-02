@@ -2,7 +2,6 @@ package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
-	"database/sql"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -28,14 +27,14 @@ type (
 	}
 )
 
-func Register(db *sql.DB) echo.HandlerFunc {
+func Register(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		u := data.User{
 			Login:    c.FormValue("name"),
 			Email:    c.FormValue("email"),
 			Password: c.FormValue("password"),
 		}
-		u, err := data.AddUser(db, u)
+		u, err := db.AddUser(u)
 		if err != nil {
 			return echo.ErrUnauthorized
 		}
@@ -44,12 +43,12 @@ func Register(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func Login(db *sql.DB) echo.HandlerFunc {
+func Login(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		username := c.QueryParam("username")
 		password := c.QueryParam("password")
 
-		user, err := data.GetUserByLoginAndPassword(db, username, password)
+		user, err := db.GetUserByLoginAndPassword(username, password)
 
 		if err != nil {
 			return echo.ErrUnauthorized

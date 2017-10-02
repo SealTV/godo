@@ -8,13 +8,49 @@ import (
 )
 
 const (
-	DB_USER           = "postgres"
-	DB_NAME           = "todo_database"
-	DB_SSL_MODE       = "disable"
-	DB_DEFAULT_SCHEMA = "main_schema"
+	dbUser          = "postgres"
+	dbName          = "todo_database"
+	dbSslMode       = "disable"
+	dbDefaultSchema = "main_schema"
 )
 
-func IniDB() *sql.DB {
+type DBConnector interface {
+	GetUserModel(id int) (UserModel, error)
+
+	//User section
+	GetAllUsers() (UsersCollection, error)
+	GetUserById(id int) (User, error)
+	GetUserByLoginAndPassword(login, password string) (User, error)
+	AddUser(user User) (User, error)
+	UpdateUser(user User) (int64, error)
+	DeleteUser(user User) (int64, error)
+	DeleteUserById(user int) (int64, error)
+
+	//List section
+	GetAllLists() (ListsCollection, error)
+	GetAllListsForUser(user User) (ListsCollection, error)
+	GetAllListsForUserId(user int) (ListsCollection, error)
+	GetListById(id int) (List, error)
+	AddList(list List) (List, error)
+	UpdateList(list List) (int64, error)
+	DeleteList(list List) (int64, error)
+	DeleteListById(list int) (int64, error)
+
+	//User section
+	GetAllTodos() (TodoCollection, error)
+	GetAllTodosForUser(user User) (TodoCollection, error)
+	GetAllTodosForUserList(user User, list List) (TodoCollection, error)
+	AddTodo(todo Todo) (Todo, error)
+	UpdateTodo(todo Todo) (int64, error)
+	DeleteTodo(todo Todo) (int64, error)
+	DeleteTodoById(id int) (int64, error)
+}
+
+type PostgresConnector struct {
+	*sql.DB
+}
+
+func IniDB() DBConnector {
 	db, err := sql.Open("postgres", getConnectionSating())
 	if err != nil {
 		log.Fatal(err)
@@ -26,35 +62,17 @@ func IniDB() *sql.DB {
 		panic("db nil")
 	}
 
-	_, err = db.Exec(fmt.Sprintf("SET search_path TO %s;", DB_DEFAULT_SCHEMA))
+	_, err = db.Exec(fmt.Sprintf("SET search_path TO %s;", dbDefaultSchema))
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	//todo := Todo{
-	//	UserId:      1,
-	//	IsActive:    true,
-	//	Description: "some description",
-	//	ListId:      1,
-	//	Title:       "Som title",
-	//}
-	//
-	//todo = AddTodo(db, todo)
-	//todo.Title = "Another title 2"
-	//UpdateTodo(db, todo)
-	//DeleteTodo(db, todo)
-	//todo.Id = 5
-	//DeleteTodo(db, todo)
-	//
-	//userM, err := GetUserModel(db, 1)
-	//if err != nil{
-	//	log.Fatal(err)
-	//}
-	//fmt.Println(userM)
-	return db
+	var connector DBConnector
+	connector = &PostgresConnector{db}
+	return connector
 }
 
 func getConnectionSating() string {
-	dbInfo := fmt.Sprintf("user=%s dbname=%s sslmode=%s", DB_USER, DB_NAME, DB_SSL_MODE)
+	dbInfo := fmt.Sprintf("user=%s dbname=%s sslmode=%s", dbUser, dbName, dbSslMode)
 	return dbInfo
 }

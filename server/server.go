@@ -1,8 +1,7 @@
 package server
 
 import (
-	"database/sql"
-
+	"bitbucket.org/SealTV/go-site/data"
 	"bitbucket.org/SealTV/go-site/server/v1"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -11,7 +10,7 @@ import (
 	"strings"
 )
 
-func RunServer(db *sql.DB) {
+func RunServer(db data.DBConnector) {
 	e := echo.New()
 
 	adminGroup := e.Group("/admin")

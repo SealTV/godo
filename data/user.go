@@ -3,31 +3,18 @@ package data
 import (
 	"database/sql"
 	"log"
-	"time"
 )
 
-type User struct {
-	Id           int       `db:"id"`
-	Login        string    `db:"login"`
-	Password     string    `db:"password"`
-	Email        string    `db:"email"`
-	RegisterDate time.Time `db:"register_date"`
-}
-
-type UsersCollection struct {
-	Users []User `json:"users"`
-}
-
-func GetAllUsers(db *sql.DB) UsersCollection {
+func (db *PostgresConnector) GetAllUsers() (UsersCollection, error) {
 	rows, err := db.Query("SELECT * FROM users")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	return parseUserRows(rows)
 }
 
-func GetUserById(db *sql.DB, id int) (User, error) {
+func (db *PostgresConnector) GetUserById(id int) (User, error) {
 	var user User
 	err := db.QueryRow(`SELECT * FROM users WHERE id = $1 LIMIT 1`, id).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
@@ -38,7 +25,7 @@ func GetUserById(db *sql.DB, id int) (User, error) {
 	return user, nil
 }
 
-func GetUserByLoginAndPassword(db *sql.DB, login, password string) (User, error) {
+func (db *PostgresConnector) GetUserByLoginAndPassword(login, password string) (User, error) {
 	var user User
 	err := db.QueryRow(`SELECT * FROM users WHERE (login = $1 OR email = $1) AND password = $2 LIMIT 1`, login, password).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
@@ -49,7 +36,7 @@ func GetUserByLoginAndPassword(db *sql.DB, login, password string) (User, error)
 	return user, nil
 }
 
-func AddUser(db *sql.DB, user User) (User, error) {
+func (db *PostgresConnector) AddUser(user User) (User, error) {
 	err := db.QueryRow(`INSERT
 			INTO users(login, password, email)
 			VALUES ($1, $2, $3)
@@ -62,7 +49,7 @@ func AddUser(db *sql.DB, user User) (User, error) {
 	return user, nil
 }
 
-func UpdateUser(db *sql.DB, user User) (int64, error) {
+func (db *PostgresConnector) UpdateUser(user User) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE users
 				SET login = $2, password = $3, email = $4
@@ -74,11 +61,11 @@ func UpdateUser(db *sql.DB, user User) (int64, error) {
 	return r.RowsAffected()
 }
 
-func DeleteUser(db *sql.DB, user User) (int64, error) {
-	return DeleteUserById(db, user.Id)
+func (db *PostgresConnector) DeleteUser(user User) (int64, error) {
+	return db.DeleteUserById(user.Id)
 }
 
-func DeleteUserById(db *sql.DB, user int) (int64, error) {
+func (db *PostgresConnector) DeleteUserById(user int) (int64, error) {
 	r, err := db.Exec(`DELETE FROM users WHERE id = $1`, user)
 	if err != nil {
 		log.Fatal(err)
@@ -86,17 +73,17 @@ func DeleteUserById(db *sql.DB, user int) (int64, error) {
 	return r.RowsAffected()
 }
 
-func parseUserRows(rows *sql.Rows) UsersCollection {
+func parseUserRows(rows *sql.Rows) (UsersCollection, error) {
 	result := UsersCollection{}
 	for rows.Next() {
 		user := User{}
 
 		err := rows.Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
 		if err != nil {
-			log.Fatal(err)
+			return nil, err
 		}
 
-		result.Users = append(result.Users, user)
+		result = append(result, user)
 	}
-	return result
+	return result, nil
 }

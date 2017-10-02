@@ -2,7 +2,6 @@ package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
-	"database/sql"
 	"fmt"
 	"github.com/labstack/echo"
 	"github.com/labstack/gommon/log"
@@ -12,40 +11,44 @@ import (
 
 type H map[string]interface{}
 
-func GetList(db *sql.DB) echo.HandlerFunc {
+func GetList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		listId, err := strconv.Atoi(c.QueryParam("listId"))
 		if err != nil {
 			return c.String(http.StatusBadRequest, "Invalid list id")
 		}
 
-		list, err := data.GetUserById(db, listId)
+		list, err := db.GetUserById(listId)
 		if err != nil {
 			return c.String(http.StatusNotFound, fmt.Sprintf("List by id: %s are not found", listId))
 		}
 		return c.JSON(http.StatusOK, H{"list": list})
 	}
 }
-func AddList(db *sql.DB) echo.HandlerFunc {
+func AddList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		list := new(data.List)
 		if err := c.Bind(list); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
 
-		result := data.AddList(db, *list)
+		result, err := db.AddList(*list)
+		if err != nil {
+			c.String(http.StatusFailedDependency, "Invalid value")
+		}
+
 		return c.JSON(http.StatusCreated, H{"list": result})
 	}
 }
 
-func UpdateList(db *sql.DB) echo.HandlerFunc {
+func UpdateList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		list := new(data.List)
 		if err := c.Bind(list); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
 
-		result, err := data.UpdateList(db, *list)
+		result, err := db.UpdateList(*list)
 		if err != nil {
 			return c.String(http.StatusFailedDependency, err.Error())
 		}
@@ -53,11 +56,11 @@ func UpdateList(db *sql.DB) echo.HandlerFunc {
 	}
 }
 
-func DeleteList(db *sql.DB) echo.HandlerFunc {
+func DeleteList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		id, _ := strconv.Atoi(c.Param("id"))
 
-		deleted, err := data.DeleteListById(db, id)
+		deleted, err := db.DeleteListById(id)
 		if err != nil {
 			return c.String(http.StatusFailedDependency, err.Error())
 		}
