@@ -1,12 +1,13 @@
 package data
 
 import (
+	"bitbucket.org/SealTV/go-site/model"
 	"database/sql"
 	_ "github.com/lib/pq"
 	"log"
 )
 
-func (db *PostgresConnector) GetAllTodos() (TodoCollection, error) {
+func (db *postgresConnector) GetAllTodos() (model.TodoCollection, error) {
 	rows, err := db.Query("SELECT * FROM todos")
 	if err != nil {
 		return nil, err
@@ -15,7 +16,7 @@ func (db *PostgresConnector) GetAllTodos() (TodoCollection, error) {
 	return parseTodoRows(rows)
 }
 
-func (db *PostgresConnector) GetAllTodosForUser(user User) (TodoCollection, error) {
+func (db *postgresConnector) GetAllTodosForUser(user model.User) (model.TodoCollection, error) {
 	rows, err := db.Query("SELECT * FROM todos WHERE user_id = $1", user.Id)
 	if err != nil {
 		return nil, err
@@ -24,7 +25,7 @@ func (db *PostgresConnector) GetAllTodosForUser(user User) (TodoCollection, erro
 	return parseTodoRows(rows)
 }
 
-func (db *PostgresConnector) GetAllTodosForUserList(user User, list List) (TodoCollection, error) {
+func (db *postgresConnector) GetAllTodosForUserList(user model.User, list model.List) (model.TodoCollection, error) {
 	rows, err := db.Query("SELECT * FROM todos WHERE user_id = $1 AND list_id = $2", user.Id, list.Id)
 	if err != nil {
 		return nil, err
@@ -33,7 +34,7 @@ func (db *PostgresConnector) GetAllTodosForUserList(user User, list List) (TodoC
 	return parseTodoRows(rows)
 }
 
-func (db *PostgresConnector) AddTodo(todo Todo) (Todo, error) {
+func (db *postgresConnector) AddTodo(todo model.Todo) (model.Todo, error) {
 	err := db.QueryRow(`INSERT
 			INTO todos(title, description, list_id, is_active, user_id)
 			VALUES($1, $2, $3, $4, $5)
@@ -46,7 +47,7 @@ func (db *PostgresConnector) AddTodo(todo Todo) (Todo, error) {
 	return todo, nil
 }
 
-func (db *PostgresConnector) UpdateTodo(todo Todo) (int64, error) {
+func (db *postgresConnector) UpdateTodo(todo model.Todo) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE todos
 				SET title = $2, description = $3, list_id = $4, is_active = $5, user_id = $6
@@ -58,11 +59,11 @@ func (db *PostgresConnector) UpdateTodo(todo Todo) (int64, error) {
 	return r.RowsAffected()
 }
 
-func (db *PostgresConnector) DeleteTodo(todo Todo) (int64, error) {
+func (db *postgresConnector) DeleteTodo(todo model.Todo) (int64, error) {
 	return db.DeleteTodoById(todo.Id)
 }
 
-func (db *PostgresConnector) DeleteTodoById(id int) (int64, error) {
+func (db *postgresConnector) DeleteTodoById(id int) (int64, error) {
 	r, err := db.Exec(`DELETE FROM todos WHERE id = $1`, id)
 	if err != nil {
 		log.Fatal(err)
@@ -70,10 +71,10 @@ func (db *PostgresConnector) DeleteTodoById(id int) (int64, error) {
 	return r.RowsAffected()
 }
 
-func parseTodoRows(rows *sql.Rows) (TodoCollection, error) {
-	result := TodoCollection{}
+func parseTodoRows(rows *sql.Rows) (model.TodoCollection, error) {
+	result := model.TodoCollection{}
 	for rows.Next() {
-		todo := Todo{}
+		todo := model.Todo{}
 
 		err := rows.Scan(&todo.Id, &todo.Title, &todo.Description, &todo.ListId, &todo.IsActive, &todo.UserId, &todo.DateCreate)
 		if err != nil {

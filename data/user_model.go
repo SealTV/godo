@@ -1,8 +1,10 @@
 package data
 
-func (db *PostgresConnector) GetUserModel(id int) (UserModel, error) {
-	var userModel UserModel
-	var user User
+import "bitbucket.org/SealTV/go-site/model"
+
+func (db *postgresConnector) GetUserModel(id int) (model.UserModel, error) {
+	var userModel model.UserModel
+	var user model.User
 	user, err := db.GetUserById(id)
 	if err != nil {
 		return userModel, err
@@ -17,11 +19,11 @@ func (db *PostgresConnector) GetUserModel(id int) (UserModel, error) {
 		return userModel, err
 	}
 
-	lists := make(map[int]TodoListModel)
+	lists := make(map[int]model.TodoListModel)
 	for rows.Next() {
 		var listId int
 		var listName string
-		var todo Todo
+		var todo model.Todo
 		todo.UserId = user.Id
 
 		err := rows.Scan(&listId, &listName, &todo.Id, &todo.Title, &todo.Description, &todo.IsActive, &todo.DateCreate)
@@ -32,7 +34,7 @@ func (db *PostgresConnector) GetUserModel(id int) (UserModel, error) {
 
 		list, ok := lists[listId]
 		if !ok {
-			list.List = List{
+			list.List = model.List{
 				Id:     listId,
 				Name:   listName,
 				UserId: user.Id,

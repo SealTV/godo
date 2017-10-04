@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/model"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"net/http"
@@ -42,7 +43,7 @@ func GetUserModel(db data.DBConnector) echo.HandlerFunc {
 
 func UpdateUser(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		user := new(data.User)
+		user := new(model.User)
 		if err := c.Bind(user); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
@@ -57,7 +58,7 @@ func UpdateUser(db data.DBConnector) echo.HandlerFunc {
 
 func DeleteUser(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		user := new(data.User)
+		user := new(model.User)
 		if err := c.Bind(user); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}

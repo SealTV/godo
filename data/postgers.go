@@ -3,8 +3,10 @@ package data
 import (
 	"database/sql"
 	"fmt"
-	_ "github.com/lib/pq"
 	"log"
+
+	"bitbucket.org/SealTV/go-site/model"
+	_ "github.com/lib/pq"
 )
 
 const (
@@ -14,43 +16,57 @@ const (
 	dbDefaultSchema = "main_schema"
 )
 
-type DBConnector interface {
-	GetUserModel(id int) (UserModel, error)
-
-	//User section
-	GetAllUsers() (UsersCollection, error)
-	GetUserById(id int) (User, error)
-	GetUserByLoginAndPassword(login, password string) (User, error)
-	AddUser(user User) (User, error)
-	UpdateUser(user User) (int64, error)
-	DeleteUser(user User) (int64, error)
+//UserTable provide methods for table queries
+type UserTable interface {
+	GetAllUsers() (model.UsersCollection, error)
+	GetUserById(id int) (model.User, error)
+	GetUserByLoginAndPassword(login, password string) (model.User, error)
+	AddUser(user model.User) (model.User, error)
+	UpdateUser(user model.User) (int64, error)
+	DeleteUser(user model.User) (int64, error)
 	DeleteUserById(user int) (int64, error)
+}
 
-	//List section
-	GetAllLists() (ListsCollection, error)
-	GetAllListsForUser(user User) (ListsCollection, error)
-	GetAllListsForUserId(user int) (ListsCollection, error)
-	GetListById(id int) (List, error)
-	AddList(list List) (List, error)
-	UpdateList(list List) (int64, error)
-	DeleteList(list List) (int64, error)
+//ListTable provide methods for table queries
+type ListTable interface {
+	GetAllLists() (model.ListsCollection, error)
+	GetAllListsForUser(user model.User) (model.ListsCollection, error)
+	GetAllListsForUserId(user int) (model.ListsCollection, error)
+	GetListById(id int) (model.List, error)
+	AddList(list model.List) (model.List, error)
+	UpdateList(list model.List) (int64, error)
+	DeleteList(list model.List) (int64, error)
 	DeleteListById(list int) (int64, error)
+}
 
-	//User section
-	GetAllTodos() (TodoCollection, error)
-	GetAllTodosForUser(user User) (TodoCollection, error)
-	GetAllTodosForUserList(user User, list List) (TodoCollection, error)
-	AddTodo(todo Todo) (Todo, error)
-	UpdateTodo(todo Todo) (int64, error)
-	DeleteTodo(todo Todo) (int64, error)
+//TodoTable provide methods for table queries
+type TodoTable interface {
+	GetAllTodos() (model.TodoCollection, error)
+	GetAllTodosForUser(user model.User) (model.TodoCollection, error)
+	GetAllTodosForUserList(user model.User, list model.List) (model.TodoCollection, error)
+	AddTodo(todo model.Todo) (model.Todo, error)
+	UpdateTodo(todo model.Todo) (int64, error)
+	DeleteTodo(todo model.Todo) (int64, error)
 	DeleteTodoById(id int) (int64, error)
 }
 
-type PostgresConnector struct {
+//DBConnector provide methods for datase
+type DBConnector interface {
+	GetUserModel(id int) (model.UserModel, error)
+	//User section
+	UserTable
+	//List section
+	ListTable
+	//Todos section
+	TodoTable
+}
+
+type postgresConnector struct {
 	*sql.DB
 }
 
-func IniDB() DBConnector {
+//InitDB create connector for db
+func InitDB() DBConnector {
 	db, err := sql.Open("postgres", getConnectionSating())
 	if err != nil {
 		log.Fatal(err)
@@ -68,7 +84,7 @@ func IniDB() DBConnector {
 	}
 
 	var connector DBConnector
-	connector = &PostgresConnector{db}
+	connector = &postgresConnector{db}
 	return connector
 }
 

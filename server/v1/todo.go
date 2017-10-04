@@ -6,6 +6,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
+	"bitbucket.org/SealTV/go-site/model"
 )
 
 func GetTodos(db data.DBConnector) echo.HandlerFunc {
@@ -16,7 +17,7 @@ func GetTodos(db data.DBConnector) echo.HandlerFunc {
 
 func AddTodo(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		todo := new(data.Todo)
+		todo := new(model.Todo)
 		if err := c.Bind(todo); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
@@ -31,7 +32,7 @@ func AddTodo(db data.DBConnector) echo.HandlerFunc {
 
 func UpdateTodo(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		todo := new(data.Todo)
+		todo := new(model.Todo)
 		if err := c.Bind(todo); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}

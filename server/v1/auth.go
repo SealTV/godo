@@ -2,6 +2,7 @@ package v1
 
 import (
 	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/model"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
@@ -29,7 +30,7 @@ type (
 
 func Register(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		u := data.User{
+		u := model.User{
 			Login:    c.FormValue("name"),
 			Email:    c.FormValue("email"),
 			Password: c.FormValue("password"),
@@ -91,7 +92,7 @@ func MainJwt(c echo.Context) error {
 	return c.String(http.StatusOK, "you are on the top secret jwt page!")
 }
 
-func createJwtToken(user data.User) (string, error) {
+func createJwtToken(user model.User) (string, error) {
 	//userJson, _ := json.Marshal(&user)
 	claims := JwtClaims{
 		user.Login,

@@ -7,6 +7,7 @@ import (
 	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
+	"bitbucket.org/SealTV/go-site/model"
 )
 
 type H map[string]interface{}
@@ -27,7 +28,7 @@ func GetList(db data.DBConnector) echo.HandlerFunc {
 }
 func AddList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		list := new(data.List)
+		list := new(model.List)
 		if err := c.Bind(list); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
@@ -43,7 +44,7 @@ func AddList(db data.DBConnector) echo.HandlerFunc {
 
 func UpdateList(db data.DBConnector) echo.HandlerFunc {
 	return func(c echo.Context) error {
-		list := new(data.List)
+		list := new(model.List)
 		if err := c.Bind(list); err != nil {
 			c.String(http.StatusFailedDependency, "Invalid value")
 		}
