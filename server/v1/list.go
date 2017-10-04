@@ -1,13 +1,14 @@
 package v1
 
 import (
-	"bitbucket.org/SealTV/go-site/data"
 	"fmt"
-	"github.com/labstack/echo"
-	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
+
+	"bitbucket.org/SealTV/go-site/data"
 	"bitbucket.org/SealTV/go-site/model"
+	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 )
 
 type H map[string]interface{}
@@ -21,7 +22,7 @@ func GetList(db data.DBConnector) echo.HandlerFunc {
 
 		list, err := db.GetUserById(listId)
 		if err != nil {
-			return c.String(http.StatusNotFound, fmt.Sprintf("List by id: %s are not found", listId))
+			return c.String(http.StatusNotFound, fmt.Sprintf("List by id: %d are not found", listId))
 		}
 		return c.JSON(http.StatusOK, H{"list": list})
 	}
