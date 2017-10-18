@@ -11,9 +11,9 @@ import (
 
 const (
 	dbUser          = "postgres"
-	dbName          = "todo_database"
+	dbName          = "todo_db"
 	dbSslMode       = "disable"
-	dbDefaultSchema = "main_schema"
+	dbDefaultSchema = "public"
 )
 
 //UserTable provide methods for table queries

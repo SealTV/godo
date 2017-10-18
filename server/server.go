@@ -88,7 +88,7 @@ func checkCookie(next echo.HandlerFunc) echo.HandlerFunc {
 }
 
 func mainAdmin(c echo.Context) error {
-	return c.String(http.StatusOK, "horay you are on the secret amdin main page!")
+	return c.String(http.StatusOK, "hoary you are on the secret admin main page!")
 }
 
 func mainCookie(c echo.Context) error {

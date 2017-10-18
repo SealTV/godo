@@ -35,8 +35,7 @@ func (db *postgresConnector) GetAllTodosForUserList(user model.User, list model.
 }
 
 func (db *postgresConnector) AddTodo(todo model.Todo) (model.Todo, error) {
-	err := db.QueryRow(`INSERT
-			INTO todos(title, description, list_id, is_active, user_id)
+	err := db.QueryRow(`INSERT INTO todos(title, description, list_id, is_active, user_id)
 			VALUES($1, $2, $3, $4, $5)
 			RETURNING id, date_create;`,
 		todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId).Scan(&todo.Id, &todo.DateCreate)
