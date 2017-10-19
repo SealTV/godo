@@ -15,6 +15,7 @@ pipelines:
           - cd "${PACKAGE_PATH}"
           - go get -v
           - go get -v github.com/DATA-DOG/go-sqlmock
+          - go get -v gopkg.in/DATA-DOG/go-sqlmock.v1
           - go build -v
           - go test -v
           - go test -v bitbucket.org/SealTV/go-site/tools
