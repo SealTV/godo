@@ -8,7 +8,7 @@ import (
 
 	"bitbucket.org/SealTV/go-site/model"
 	_ "github.com/lib/pq"
-	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
+	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
 func Test_postgresConnector_GetAllTodos(t *testing.T) {
