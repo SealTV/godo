@@ -1,10 +1,11 @@
 package data
 
 import (
-	"bitbucket.org/SealTV/go-site/model"
 	"database/sql"
-	_ "github.com/lib/pq"
 	"log"
+
+	"bitbucket.org/SealTV/go-site/model"
+	_ "github.com/lib/pq"
 )
 
 func (db *postgresConnector) GetAllTodos() (model.TodoCollection, error) {
@@ -82,5 +83,6 @@ func parseTodoRows(rows *sql.Rows) (model.TodoCollection, error) {
 
 		result = append(result, todo)
 	}
+
 	return result, nil
 }
