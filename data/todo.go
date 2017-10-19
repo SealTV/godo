@@ -2,10 +2,8 @@ package data
 
 import (
 	"database/sql"
-	"log"
 
 	"bitbucket.org/SealTV/go-site/model"
-	_ "github.com/lib/pq"
 )
 
 func (db *postgresConnector) GetAllTodos() (model.TodoCollection, error) {
@@ -54,7 +52,7 @@ func (db *postgresConnector) UpdateTodo(todo model.Todo) (int64, error) {
 				WHERE id = $1`,
 		todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	return r.RowsAffected()
 }
@@ -66,7 +64,7 @@ func (db *postgresConnector) DeleteTodo(todo model.Todo) (int64, error) {
 func (db *postgresConnector) DeleteTodoById(id int) (int64, error) {
 	r, err := db.Exec(`DELETE FROM todos WHERE id = $1`, id)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	return r.RowsAffected()
 }
@@ -82,6 +80,10 @@ func parseTodoRows(rows *sql.Rows) (model.TodoCollection, error) {
 		}
 
 		result = append(result, todo)
+	}
+
+	if rows.Err() != nil {
+		return nil, rows.Err()
 	}
 
 	return result, nil
