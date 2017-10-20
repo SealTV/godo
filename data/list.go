@@ -2,7 +2,6 @@ package data
 
 import (
 	"database/sql"
-	"log"
 
 	"bitbucket.org/SealTV/go-site/model"
 )
@@ -11,7 +10,7 @@ import (
 func (db *postgresConnector) GetAllLists() (model.ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists")
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer rows.Close()
 	return parseListsRows(rows)
@@ -26,7 +25,7 @@ func (db *postgresConnector) GetAllListsForUser(user model.User) (model.ListsCol
 func (db *postgresConnector) GetAllListsForUserId(user int) (model.ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists WHERE user_id = $1", user)
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 	defer rows.Close()
 	return parseListsRows(rows)
@@ -43,11 +42,7 @@ func (db *postgresConnector) GetListById(id int) (model.List, error) {
 }
 
 func (db *postgresConnector) AddList(list model.List) (model.List, error) {
-	err := db.QueryRow(`INSERT
-			INTO lists(name, user_id)
-			VALUES($1, $2)
-			RETURNING id;`,
-		list.Name, list.UserId).Scan(&list.Id)
+	err := db.QueryRow(`INSERT INTO lists(name, user_id) VALUES($1, $2) RETURNING id`, list.Name, list.UserId).Scan(&list.Id)
 	if err != nil {
 		return list, err
 	}
@@ -57,12 +52,10 @@ func (db *postgresConnector) AddList(list model.List) (model.List, error) {
 
 func (db *postgresConnector) UpdateList(list model.List) (int64, error) {
 	r, err := db.Exec(
-		`UPDATE lists
-				SET name = $2, user_id = $3
-				WHERE id = $1`,
+		`UPDATE lists SET name = $2, user_id = $3 WHERE id = $1`,
 		list.Id, list.Name, list.UserId)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	return r.RowsAffected()
 }
