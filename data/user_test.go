@@ -361,132 +361,113 @@ func Test_postgresConnector_DeleteUser(t *testing.T) {
 		user model.User
 	}
 	tests := []struct {
-		name    string
-		db      *postgresConnector
-		mock    sqlmock.Sqlmock
-		args    args
-		want    int64
-		wantErr bool
+		name     string
+		db       *postgresConnector
+		mock     sqlmock.Sqlmock
+		args     args
+		want     int64
+		wantErr1 bool
+		wantErr2 bool
+		wantErr3 bool
+		wantErr4 bool
 	}{
 		{
-			name:    "1",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
-			want:    1,
-			wantErr: false,
+			name:     "1",
+			db:       &postgresConnector{db},
+			mock:     mock,
+			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			want:     1,
+			wantErr1: true,
+			wantErr2: false,
+			wantErr3: false,
+			wantErr4: false,
 		},
 		{
-			name:    "2",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
-			want:    1,
-			wantErr: false,
+			name:     "2",
+			db:       &postgresConnector{db},
+			mock:     mock,
+			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			want:     1,
+			wantErr1: false,
+			wantErr2: true,
+			wantErr3: false,
+			wantErr4: false,
 		},
 		{
-			name:    "3",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
-			want:    1,
-			wantErr: true,
+			name:     "3",
+			db:       &postgresConnector{db},
+			mock:     mock,
+			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			want:     1,
+			wantErr1: false,
+			wantErr2: false,
+			wantErr3: true,
+			wantErr4: false,
+		},
+		{
+			name:     "4",
+			db:       &postgresConnector{db},
+			mock:     mock,
+			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			want:     1,
+			wantErr1: false,
+			wantErr2: false,
+			wantErr3: false,
+			wantErr4: true,
+		},
+		{
+			name:     "5",
+			db:       &postgresConnector{db},
+			mock:     mock,
+			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			want:     1,
+			wantErr1: false,
+			wantErr2: false,
+			wantErr3: false,
+			wantErr4: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectExec := tt.mock.ExpectExec(`DELETE FROM users WHERE (.+)`).
-				WithArgs(tt.args.user.Id)
+			tt.mock.ExpectBegin()
 
-			if tt.wantErr {
+			expectExec := tt.mock.ExpectExec(`DELETE FROM todos WHERE (.+)`).WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+			if tt.wantErr1 {
 				expectExec.WillReturnError(fmt.Errorf("Some error"))
+				tt.mock.ExpectRollback()
 			} else {
-				expectExec.WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+				expectExec := tt.mock.ExpectExec("DELETE FROM lists WHERE (.+)").WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+				if tt.wantErr2 {
+					expectExec.WillReturnError(fmt.Errorf("Some error"))
+					tt.mock.ExpectRollback()
+				} else {
+					expectExec := tt.mock.ExpectExec(`DELETE FROM users WHERE (.+)`).WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+					if tt.wantErr3 {
+						expectExec.WillReturnError(fmt.Errorf("Some error"))
+						tt.mock.ExpectRollback()
+					} else {
+						expectExec.WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+						expectCommit := tt.mock.ExpectCommit()
+						if tt.wantErr4 {
+							expectCommit.WillReturnError(fmt.Errorf("some error"))
+						}
+					}
+				}
 			}
 
 			got, err := tt.db.DeleteUser(tt.args.user)
-
 			if err := mock.ExpectationsWereMet(); err != nil {
 				t.Errorf("there were unfulfilled expections: %s", err)
 			}
-			if (err != nil) != tt.wantErr {
-				t.Errorf("postgresConnector.DeleteUser() error = %v, wantErr %v", err, tt.wantErr)
+
+			wantErr := tt.wantErr1 || tt.wantErr2 || tt.wantErr3 || tt.wantErr4
+			if (err != nil) != wantErr {
+				t.Errorf("postgresConnector.DeleteUser() error = %v, wantErr %v", err, wantErr)
 				return
 			}
 
-			if !tt.wantErr && got != tt.want {
+			if !wantErr && got != tt.want {
 				t.Errorf("postgresConnector.DeleteUser() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_postgresConnector_DeleteUserById(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-
-	type args struct {
-		user int
-	}
-	tests := []struct {
-		name    string
-		db      *postgresConnector
-		mock    sqlmock.Sqlmock
-		args    args
-		want    int64
-		wantErr bool
-	}{
-		{
-			name:    "1",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: 1},
-			want:    1,
-			wantErr: false,
-		},
-		{
-			name:    "2",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: 1},
-			want:    1,
-			wantErr: false,
-		},
-		{
-			name:    "3",
-			db:      &postgresConnector{db},
-			mock:    mock,
-			args:    args{user: 1},
-			want:    1,
-			wantErr: true,
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			expectExec := tt.mock.ExpectExec(`DELETE FROM users WHERE (.+)`).WithArgs(tt.args.user)
-
-			if tt.wantErr {
-				expectExec.WillReturnError(fmt.Errorf("Some error"))
-			} else {
-				expectExec.WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
-			}
-
-			got, err := tt.db.DeleteUserById(tt.args.user)
-
-			if err := mock.ExpectationsWereMet(); err != nil {
-				t.Errorf("there were unfulfilled expections: %s", err)
-			}
-
-			if (err != nil) != tt.wantErr {
-				t.Errorf("postgresConnector.DeleteUserById() error = %v, wantErr %v", err, tt.wantErr)
-				return
-			}
-
-			if !tt.wantErr && got != tt.want {
-				t.Errorf("postgresConnector.DeleteUserById() = %v, want %v", got, tt.want)
 			}
 		})
 	}

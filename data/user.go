@@ -61,8 +61,25 @@ func (db *postgresConnector) DeleteUser(user model.User) (int64, error) {
 }
 
 func (db *postgresConnector) DeleteUserById(user int) (int64, error) {
-	r, err := db.Exec(`DELETE FROM users WHERE id = $1`, user)
+	tx, err := db.Begin()
+	r, err := tx.Exec(`DELETE FROM todos WHERE user_id = $1`, user)
 	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	r, err = tx.Exec(`DELETE FROM lists WHERE user_id = $1`, user)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	r, err = db.Exec(`DELETE FROM users WHERE id = $1`, user)
+	if err != nil {
+		tx.Rollback()
+		return 0, err
+	}
+	err = tx.Commit()
+	if err != nil {
+		tx.Rollback()
 		return 0, err
 	}
 	return r.RowsAffected()
