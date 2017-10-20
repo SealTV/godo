@@ -264,7 +264,6 @@ func Test_postgresConnector_GetAllTodosForUserList(t *testing.T) {
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
-
 				rs := sqlmock.NewRows([]string{"id", "title", "description", "list_id", "is_active", "user_id", "date_create"})
 				for _, todo := range tt.want {
 					rs = rs.AddRow(todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId, todo.DateCreate)

@@ -1,9 +1,9 @@
 package data
 
 import (
-	"bitbucket.org/SealTV/go-site/model"
 	"database/sql"
-	"log"
+
+	"bitbucket.org/SealTV/go-site/model"
 )
 
 func (db *postgresConnector) GetAllUsers() (model.UsersCollection, error) {
@@ -38,10 +38,7 @@ func (db *postgresConnector) GetUserByLoginAndPassword(login, password string) (
 }
 
 func (db *postgresConnector) AddUser(user model.User) (model.User, error) {
-	err := db.QueryRow(`INSERT
-			INTO users(login, password, email)
-			VALUES ($1, $2, $3)
-			RETURNING id, register_date;`,
+	err := db.QueryRow(`INSERT INTO users(login, password, email) VALUES ($1, $2, $3) RETURNING id, register_date;`,
 		user.Login, user.Password, user.Email).Scan(&user.Id, &user.RegisterDate)
 
 	if err != nil {
@@ -51,13 +48,10 @@ func (db *postgresConnector) AddUser(user model.User) (model.User, error) {
 }
 
 func (db *postgresConnector) UpdateUser(user model.User) (int64, error) {
-	r, err := db.Exec(
-		`UPDATE users
-				SET login = $2, password = $3, email = $4
-				WHERE id = $1`,
+	r, err := db.Exec(`UPDATE users SET login = $2, password = $3, email = $4 WHERE id = $1`,
 		user.Id, user.Login, user.Password, user.Email)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	return r.RowsAffected()
 }
@@ -69,7 +63,7 @@ func (db *postgresConnector) DeleteUser(user model.User) (int64, error) {
 func (db *postgresConnector) DeleteUserById(user int) (int64, error) {
 	r, err := db.Exec(`DELETE FROM users WHERE id = $1`, user)
 	if err != nil {
-		log.Fatal(err)
+		return 0, err
 	}
 	return r.RowsAffected()
 }
