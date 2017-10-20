@@ -153,21 +153,24 @@ func Test_postgresConnector_GetUserByLoginAndPassword(t *testing.T) {
 		want    model.User
 		wantErr bool
 	}{
-		{name: "1",
+		{
+			name:    "1",
 			db:      &postgresConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
-		{name: "2",
+		{
+			name:    "2",
 			db:      &postgresConnector{db},
 			mock:    mock,
 			args:    args{login: "some1@email.com", password: "Some pass"},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
-		{name: "3",
+		{
+			name:    "3",
 			db:      &postgresConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
@@ -222,24 +225,27 @@ func Test_postgresConnector_AddUser(t *testing.T) {
 		want    model.User
 		wantErr bool
 	}{
-		{name: "1",
+		{
+			name:    "1",
 			db:      &postgresConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
-		{name: "2",
+		{
+			name:    "2",
 			db:      &postgresConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
-		{name: "3",
+		{
+			name:    "3",
 			db:      &postgresConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: true,
 		},
@@ -266,7 +272,7 @@ func Test_postgresConnector_AddUser(t *testing.T) {
 				t.Errorf("postgresConnector.AddUser() error = %v, wantErr %v", err, tt.wantErr)
 				return
 			}
-			if !reflect.DeepEqual(got, tt.want) {
+			if !tt.wantErr && !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("postgresConnector.AddUser() = %v, want %v", got, tt.want)
 			}
 		})
