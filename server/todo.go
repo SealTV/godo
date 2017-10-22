@@ -1,18 +1,31 @@
-package v1
+package server
 
 import (
-	"bitbucket.org/SealTV/go-site/data"
-	"github.com/labstack/echo"
-	"github.com/labstack/gommon/log"
 	"net/http"
 	"strconv"
+
+	"bitbucket.org/SealTV/go-site/data"
 	"bitbucket.org/SealTV/go-site/model"
+	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
+	"github.com/labstack/gommon/log"
 )
 
-func GetTodos(db data.DBConnector) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		return c.JSON(http.StatusOK, "tasks")
+func (s *Server) GetTodos(c echo.Context) error {
+	token := c.Get("user").(*jwt.Token)
+	claims := token.Claims.(jwt.MapClaims)
+
+	db := s.db
+	id, _ := strconv.Atoi(claims["jti"].(string))
+	user, err := db.GetUserById(id)
+	if err != nil {
+		return c.JSON(http.StatusNotFound, "User are not found")
 	}
+	todos, err := s.db.GetAllTodosForUser(user)
+	if err != nil {
+		return c.JSON(http.StatusNoContent, err)
+	}
+	return c.JSON(http.StatusOK, todos)
 }
 
 func AddTodo(db data.DBConnector) echo.HandlerFunc {

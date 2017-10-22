@@ -1,18 +1,22 @@
 package server
 
 import (
-	"bitbucket.org/SealTV/go-site/data"
-	"bitbucket.org/SealTV/go-site/server/v1"
-	"github.com/labstack/echo"
-	"github.com/labstack/echo/middleware"
 	"log"
 	"net/http"
 	"strings"
+
+	"bitbucket.org/SealTV/go-site/data"
+	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 )
+
+type Server struct {
+	db data.DBConnector
+}
 
 func RunServer(db data.DBConnector) {
 	e := echo.New()
-
+	s := Server{db}
 	adminGroup := e.Group("/admin")
 	cookieGroup := e.Group("/cookie")
 
@@ -32,30 +36,30 @@ func RunServer(db data.DBConnector) {
 		SigningKey:    []byte("mySecret"),
 	}))
 
-	jwtGroup.GET("/main", v1.MainJwt)
+	jwtGroup.GET("/main", MainJwt)
 
 	// user
-	jwtGroup.GET("/user", v1.GetUser(db))
-	jwtGroup.PUT("/user", v1.UpdateUser(db))
-	jwtGroup.DELETE("/user/:id", v1.DeleteUser(db))
+	jwtGroup.GET("/user", GetUser(db))
+	jwtGroup.PUT("/user", UpdateUser(db))
+	jwtGroup.DELETE("/user/:id", DeleteUser(db))
 
 	// list
-	jwtGroup.GET("/list", v1.GetList(db))
-	jwtGroup.POST("/list", v1.AddList(db))
-	jwtGroup.DELETE("/list/:id", v1.DeleteList(db))
+	jwtGroup.GET("/list", GetList(db))
+	jwtGroup.POST("/list", AddList(db))
+	jwtGroup.DELETE("/list/:id", DeleteList(db))
 
 	// todos
-	jwtGroup.GET("/tasks", v1.GetTodos(db))
-	jwtGroup.POST("/tasks", v1.AddTodo(db))
-	jwtGroup.PUT("/tasks", v1.UpdateTodo(db))
-	jwtGroup.DELETE("/tasks/:id", v1.DeleteTodo(db))
+	jwtGroup.GET("/tasks", s.GetTodos)
+	jwtGroup.POST("/tasks", AddTodo(db))
+	jwtGroup.PUT("/tasks", UpdateTodo(db))
+	jwtGroup.DELETE("/tasks/:id", DeleteTodo(db))
 
 	cookieGroup.Use(checkCookie)
 	cookieGroup.GET("/main", mainCookie)
 	adminGroup.GET("/main", mainAdmin)
 
-	e.POST("/register", v1.Register(db))
-	e.GET("/login", v1.Login(db))
+	e.POST("/register", Register(db))
+	e.GET("/login", Login(db))
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello world")

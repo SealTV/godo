@@ -1,15 +1,16 @@
-package v1
+package server
 
 import (
-	"bitbucket.org/SealTV/go-site/data"
-	"bitbucket.org/SealTV/go-site/model"
 	"fmt"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/labstack/echo"
-	"gopkg.in/go-playground/validator.v8"
 	"log"
 	"net/http"
 	"time"
+
+	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/model"
+	"github.com/dgrijalva/jwt-go"
+	"github.com/labstack/echo"
+	"gopkg.in/go-playground/validator.v8"
 )
 
 type (
