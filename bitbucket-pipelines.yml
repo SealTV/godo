@@ -20,4 +20,5 @@ pipelines:
           - go test -v
           - go test -v bitbucket.org/SealTV/go-site/tools
           - go test -v bitbucket.org/SealTV/go-site/data
+          - go test -v bitbucket.org/SealTV/go-site/server
           - go test -bench=.  bitbucket.org/SealTV/go-site/tools
