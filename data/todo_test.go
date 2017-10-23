@@ -12,7 +12,7 @@ import (
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-func Test_postgresConnector_GetAllTodos(t *testing.T) {
+func TestGetAllTodos(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -114,7 +114,7 @@ func Test_postgresConnector_GetAllTodos(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetAllTodosForUser(t *testing.T) {
+func TestGetAllTodosForUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -202,7 +202,7 @@ func Test_postgresConnector_GetAllTodosForUser(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetAllTodosForUserList(t *testing.T) {
+func TestGetAllTodosForUserList(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -290,7 +290,7 @@ func Test_postgresConnector_GetAllTodosForUserList(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_AddTodo(t *testing.T) {
+func TestAddTodo(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -366,7 +366,7 @@ func Test_postgresConnector_AddTodo(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_UpdateTodo(t *testing.T) {
+func TestUpdateTodo(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -438,7 +438,7 @@ func Test_postgresConnector_UpdateTodo(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_DeleteTodo(t *testing.T) {
+func TestDeleteTodo(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -506,7 +506,7 @@ func Test_postgresConnector_DeleteTodo(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_DeleteTodoById(t *testing.T) {
+func TestDeleteTodoById(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

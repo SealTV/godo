@@ -5,6 +5,7 @@
 *.dll
 *.so
 *.dylib
+*debug
 
 # Test binary, build with `go test -c`
 *.test
@@ -153,9 +154,7 @@ $RECYCLE.BIN/
 !.vscode/launch.json
 !.vscode/extensions.json
 
-.gitignore
 .idea/inspectionProfiles/
 .idea/workspace.xml
 /.vscode/
 .vscode/
-debug

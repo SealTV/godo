@@ -10,7 +10,7 @@ import (
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-func Test_postgresConnector_GetAllUsers(t *testing.T) {
+func TestGetAllUsers(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -73,7 +73,7 @@ func Test_postgresConnector_GetAllUsers(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetUserById(t *testing.T) {
+func TestGetUserById(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -134,7 +134,7 @@ func Test_postgresConnector_GetUserById(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetUserByLoginAndPassword(t *testing.T) {
+func TestGetUserByLoginAndPassword(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -207,7 +207,7 @@ func Test_postgresConnector_GetUserByLoginAndPassword(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_AddUser(t *testing.T) {
+func TestAddUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -279,7 +279,7 @@ func Test_postgresConnector_AddUser(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_UpdateUser(t *testing.T) {
+func TestUpdateUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -350,7 +350,7 @@ func Test_postgresConnector_UpdateUser(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_DeleteUser(t *testing.T) {
+func TestDeleteUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

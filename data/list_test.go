@@ -10,7 +10,7 @@ import (
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 
-func Test_postgresConnector_GetAllLists(t *testing.T) {
+func TestGetAllLists(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -72,7 +72,7 @@ func Test_postgresConnector_GetAllLists(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetAllListsForUser(t *testing.T) {
+func TestGetAllListsForUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -140,7 +140,7 @@ func Test_postgresConnector_GetAllListsForUser(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetAllListsForUserId(t *testing.T) {
+func TestGetAllListsForUserId(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -208,7 +208,7 @@ func Test_postgresConnector_GetAllListsForUserId(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_GetListById(t *testing.T) {
+func TestGetListById(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -267,7 +267,7 @@ func Test_postgresConnector_GetListById(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_AddList(t *testing.T) {
+func TestAddList(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -329,7 +329,7 @@ func Test_postgresConnector_AddList(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_UpdateList(t *testing.T) {
+func TestUpdateList(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -386,7 +386,7 @@ func Test_postgresConnector_UpdateList(t *testing.T) {
 	}
 }
 
-func Test_postgresConnector_DeleteList(t *testing.T) {
+func TestDeleteList(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

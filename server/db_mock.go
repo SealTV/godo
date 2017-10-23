@@ -10,6 +10,10 @@ type dbMock struct {
 	todos map[int]model.Todo
 }
 
+func (db *dbMock) GetUserModel(id int) (model.UserModel, error) {
+	return model.UserModel{}, nil
+}
+
 func (db *dbMock) GetAllUsers() (model.UsersCollection, error) {
 	result := make([]model.User, len(db.users))
 	for _, user := range db.users {

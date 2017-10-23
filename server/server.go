@@ -1,9 +1,7 @@
 package server
 
 import (
-	"log"
 	"net/http"
-	"strings"
 
 	"bitbucket.org/SealTV/go-site/data"
 	"github.com/labstack/echo"
@@ -18,7 +16,6 @@ func RunServer(db data.DBConnector) {
 	e := echo.New()
 	s := Server{db}
 	adminGroup := e.Group("/admin")
-	cookieGroup := e.Group("/cookie")
 
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 		Root: "../static",
@@ -36,30 +33,28 @@ func RunServer(db data.DBConnector) {
 		SigningKey:    []byte("mySecret"),
 	}))
 
-	jwtGroup.GET("/main", MainJwt)
+	jwtGroup.GET("/main", s.mainJwt)
 
 	// user
-	jwtGroup.GET("/user", GetUser(db))
-	jwtGroup.PUT("/user", UpdateUser(db))
-	jwtGroup.DELETE("/user/:id", DeleteUser(db))
+	jwtGroup.GET("/user", s.getUser)
+	jwtGroup.PUT("/user", s.updateUser)
+	jwtGroup.DELETE("/user/:id", s.deleteUser)
 
 	// list
-	jwtGroup.GET("/list", GetList(db))
-	jwtGroup.POST("/list", AddList(db))
-	jwtGroup.DELETE("/list/:id", DeleteList(db))
+	jwtGroup.GET("/list", s.getList)
+	jwtGroup.POST("/list", s.addList)
+	jwtGroup.DELETE("/list/:id", s.deleteList)
 
 	// todos
-	jwtGroup.GET("/tasks", s.GetTodos)
-	jwtGroup.POST("/tasks", AddTodo(db))
-	jwtGroup.PUT("/tasks", UpdateTodo(db))
-	jwtGroup.DELETE("/tasks/:id", DeleteTodo(db))
+	jwtGroup.GET("/tasks", s.getTodos)
+	jwtGroup.POST("/tasks", s.addTodo)
+	jwtGroup.PUT("/tasks", s.updateTodo)
+	jwtGroup.DELETE("/tasks/:id", s.deleteTodo)
 
-	cookieGroup.Use(checkCookie)
-	cookieGroup.GET("/main", mainCookie)
 	adminGroup.GET("/main", mainAdmin)
 
-	e.POST("/register", Register(db))
-	e.GET("/login", Login(db))
+	e.POST("/register", s.register)
+	e.GET("/login", s.login)
 
 	e.GET("/", func(c echo.Context) error {
 		return c.String(http.StatusOK, "Hello world")
@@ -69,32 +64,4 @@ func RunServer(db data.DBConnector) {
 	e.File("/todo", "static/todo.html")
 
 	e.Logger.Fatal(e.Start(":1323"))
-}
-
-func checkCookie(next echo.HandlerFunc) echo.HandlerFunc {
-	return func(c echo.Context) error {
-		cookie, err := c.Cookie("sessionID")
-		if err != nil {
-			if strings.Contains(err.Error(), "named cookie not present") {
-				return c.String(http.StatusUnauthorized, "you don't have any cookie")
-			}
-
-			log.Println(err)
-			return err
-		}
-
-		if cookie.Value == "some_string" {
-			return next(c)
-		}
-
-		return c.String(http.StatusUnauthorized, "you don't have the right cookie, cookie")
-	}
-}
-
-func mainAdmin(c echo.Context) error {
-	return c.String(http.StatusOK, "hoary you are on the secret admin main page!")
-}
-
-func mainCookie(c echo.Context) error {
-	return c.String(http.StatusOK, "you are on the secret cookie page!")
 }
