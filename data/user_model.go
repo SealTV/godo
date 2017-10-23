@@ -1,6 +1,8 @@
 package data
 
-import "bitbucket.org/SealTV/go-site/model"
+import (
+	"bitbucket.org/SealTV/go-site/model"
+)
 
 func (db *postgresConnector) GetUserModel(id int) (model.UserModel, error) {
 	var userModel model.UserModel
@@ -43,6 +45,14 @@ func (db *postgresConnector) GetUserModel(id int) (model.UserModel, error) {
 
 	for _, v := range lists {
 		userModel.TodoLists = append(userModel.TodoLists, v)
+	}
+
+	for i := 0; i < len(userModel.TodoLists)-1; i++ {
+		for j := i + 1; j < len(userModel.TodoLists); j++ {
+			if userModel.TodoLists[i].Id > userModel.TodoLists[j].Id {
+				userModel.TodoLists[i], userModel.TodoLists[j] = userModel.TodoLists[j], userModel.TodoLists[i]
+			}
+		}
 	}
 
 	return userModel, nil
