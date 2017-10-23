@@ -39,7 +39,7 @@ func (s *Server) register(c echo.Context) error {
 		return echo.ErrUnauthorized
 	}
 
-	return c.String(http.StatusOK, "Rigesterd")
+	return c.JSON(http.StatusCreated, u)
 }
 
 func (s *Server) login(c echo.Context) error {
