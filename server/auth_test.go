@@ -18,7 +18,7 @@ import (
 var (
 	mockDB = &dbMock{
 		users: map[int]model.User{
-			1: model.User{
+			1: {
 				Id:           1,
 				Login:        "SealTV",
 				Email:        "seal@test.com",
@@ -27,14 +27,14 @@ var (
 			},
 		},
 		lists: map[int]model.List{
-			1: model.List{
+			1: {
 				Id:     1,
 				Name:   "List",
 				UserId: 1,
 			},
 		},
 		todos: map[int]model.Todo{
-			1: model.Todo{
+			1: {
 				Id:          1,
 				Title:       "todo1",
 				Description: "Todo desc",
@@ -99,23 +99,43 @@ func TestServerRegister(t *testing.T) {
 }
 
 func TestServerLogin(t *testing.T) {
-	type args struct {
-		c echo.Context
+	//Setup
+	e := echo.New()
+	user := model.User{
+		Id:           1,
+		Login:        "SealTV",
+		Email:        "seal@test.com",
+		Password:     "pass",
+		RegisterDate: time.Now(),
 	}
-	tests := []struct {
-		name    string
-		s       *Server
-		args    args
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.login(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.login() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+	q := make(url.Values)
+	q.Set("username", user.Login)
+	q.Set("password", user.Password)
+	req := httptest.NewRequest(echo.GET, "/?" + q.Encode(), nil)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+	c.SetPath("/users/:email")
+	c.SetParamNames("email")
+	c.SetParamValues("jon@labstack.com")
+	h := &Server{db: mockDB}
+
+	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2VhbFRWIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE1MTI0MjAzMTMsImp0aSI6IjEifQ.6W2Z2xNRcXeRMlPobWWa885_509HY8iMWPr7f2XQbVEKmvXoi2s2svOiVsf6Elzk_STkAW2xG_k-JFmiTQH1FA"
+	// Assertions
+	if assert.NoError(t, h.login(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
+		result := struct {
+			message string `json:"message"`
+			token string `json:"token"`
+		}{}
+
+		ttt := rec.Body.String()
+		fmt.Println(ttt)
+		if err := json.Unmarshal([]byte(ttt), &result); err != nil {
+			t.Error(fmt.Errorf("fail"))
+		}
+
+		assert.Equal(t, token, result.token)
 	}
 }
 
