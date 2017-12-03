@@ -14,7 +14,8 @@ import (
 
 type (
 	jwtClaims struct {
-		Name string `json:"name"`
+		Name  string `json:"name"`
+		Admin bool   `json:"admin"`
 		jwt.StandardClaims
 	}
 	user struct {
@@ -36,7 +37,7 @@ func (s *Server) register(c echo.Context) error {
 	}
 	u, err := s.db.AddUser(u)
 	if err != nil {
-		return echo.ErrUnauthorized
+		return c.JSON(http.StatusInternalServerError, err)
 	}
 
 	return c.JSON(http.StatusCreated, u)
@@ -47,23 +48,9 @@ func (s *Server) login(c echo.Context) error {
 	password := c.QueryParam("password")
 
 	user, err := s.db.GetUserByLoginAndPassword(username, password)
-
 	if err != nil {
-		return echo.ErrUnauthorized
-		//return c.String(http.StatusUnauthorized, "Your username or password were wrong")
+		return c.JSON(http.StatusNotFound, err)
 	}
-
-	// check username and password against DB after hashing the password
-	cookie := &http.Cookie{}
-
-	// this is the same
-	//cookie := new(http.Cookie)
-
-	cookie.Name = "sessionID"
-	cookie.Value = "some_string"
-	cookie.Expires = time.Now().Add(48 * time.Hour)
-
-	c.SetCookie(cookie)
 
 	// create jwt token
 	token, err := createJwtToken(user)
@@ -81,16 +68,16 @@ func (s *Server) login(c echo.Context) error {
 func (s *Server) mainJwt(c echo.Context) error {
 	user := c.Get("user")
 	token := user.(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
-
-	log.Println("User Name: ", claims["name"], "User ID: ", claims["jti"], "Token valid: ", token.Valid)
-
-	return c.String(http.StatusOK, "you are on the top secret jwt page!")
+	claims := token.Claims.(*jwtClaims)
+	name := claims.Name
+	str := fmt.Sprintf("Hello %s, you is admin=%v", name, claims.Admin)
+	return c.JSON(http.StatusOK, str)
 }
 
 func createJwtToken(user model.User) (string, error) {
 	claims := jwtClaims{
 		user.Login,
+		false,
 		jwt.StandardClaims{
 			Id:        fmt.Sprint(user.Id),
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
