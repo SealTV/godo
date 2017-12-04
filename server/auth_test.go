@@ -12,6 +12,7 @@ import (
 
 	"bitbucket.org/SealTV/go-site/model"
 	"github.com/labstack/echo"
+	"github.com/labstack/echo/middleware"
 	"github.com/stretchr/testify/assert"
 )
 
@@ -111,7 +112,7 @@ func TestServerLogin(t *testing.T) {
 	q := make(url.Values)
 	q.Set("username", user.Login)
 	q.Set("password", user.Password)
-	req := httptest.NewRequest(echo.GET, "/?" + q.Encode(), nil)
+	req := httptest.NewRequest(echo.GET, "/?"+q.Encode(), nil)
 	rec := httptest.NewRecorder()
 	c := e.NewContext(req, rec)
 	c.SetPath("/users/:email")
@@ -119,43 +120,55 @@ func TestServerLogin(t *testing.T) {
 	c.SetParamValues("jon@labstack.com")
 	h := &Server{db: mockDB}
 
-	token := "eyJhbGciOiJIUzUxMiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoiU2VhbFRWIiwiYWRtaW4iOmZhbHNlLCJleHAiOjE1MTI0MjAzMTMsImp0aSI6IjEifQ.6W2Z2xNRcXeRMlPobWWa885_509HY8iMWPr7f2XQbVEKmvXoi2s2svOiVsf6Elzk_STkAW2xG_k-JFmiTQH1FA"
+	token, _ := createJwtToken(user)
 	// Assertions
 	if assert.NoError(t, h.login(c)) {
 		assert.Equal(t, http.StatusOK, rec.Code)
 
 		result := struct {
-			message string `json:"message"`
-			token string `json:"token"`
+			Message string `json:"message"`
+			Token   string `json:"token"`
 		}{}
 
-		ttt := rec.Body.String()
-		fmt.Println(ttt)
-		if err := json.Unmarshal([]byte(ttt), &result); err != nil {
+		if err := json.Unmarshal([]byte(rec.Body.String()), &result); err != nil {
 			t.Error(fmt.Errorf("fail"))
 		}
 
-		assert.Equal(t, token, result.token)
+		assert.Equal(t, token, result.Token)
 	}
 }
 
 func TestServerMainJwt(t *testing.T) {
-	type args struct {
-		c echo.Context
+	//Setup
+	e := echo.New()
+
+	user := model.User{
+		Id:           1,
+		Login:        "SealTV",
+		Email:        "seal@test.com",
+		Password:     "pass",
+		RegisterDate: time.Now(),
 	}
-	tests := []struct {
-		name    string
-		s       *Server
-		args    args
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.mainJwt(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.mainJwt() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
+	token, _ := createJwtToken(user)
+
+	req := httptest.NewRequest(echo.GET, "/", nil)
+	req.Header.Set(echo.HeaderAuthorization, middleware.DefaultJWTConfig.AuthScheme+" "+token)
+	rec := httptest.NewRecorder()
+	c := e.NewContext(req, rec)
+
+	server := &Server{db: mockDB}
+	jwt := middleware.DefaultJWTConfig
+	jwt.SigningKey = []byte("mySecret")
+	jwt.SigningMethod = "HS512"
+	jwt.Claims = &jwtClaims{}
+	h := middleware.JWTWithConfig(jwt)(server.mainJwt)
+
+	// Assertions
+	fmt.Println(token)
+	a := h(c)
+	fmt.Println(a)
+	if assert.NoError(t, h(c)) {
+		assert.Equal(t, http.StatusOK, rec.Code)
+
 	}
 }

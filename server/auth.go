@@ -66,12 +66,11 @@ func (s *Server) login(c echo.Context) error {
 }
 
 func (s *Server) mainJwt(c echo.Context) error {
-	user := c.Get("user")
-	token := user.(*jwt.Token)
-	claims := token.Claims.(*jwtClaims)
+	user := c.Get("user").(*jwt.Token)
+	claims := user.Claims.(*jwtClaims)
 	name := claims.Name
 	str := fmt.Sprintf("Hello %s, you is admin=%v", name, claims.Admin)
-	return c.JSON(http.StatusOK, str)
+	return c.String(http.StatusOK, str)
 }
 
 func createJwtToken(user model.User) (string, error) {
