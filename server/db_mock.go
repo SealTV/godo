@@ -41,17 +41,21 @@ func (db *dbMock) GetUserByLoginAndPassword(login, password string) (model.User,
 }
 
 func (db *dbMock) AddUser(user model.User) (model.User, error) {
-	var maxId int
-	for id, _ := range db.users {
-		if id > maxId {
-			maxId = id
+	var maxID int
+	for id, u := range db.users {
+		if id > maxID {
+			maxID = id
+		}
+
+		if u.Email == user.Email || u.Login == user.Login {
+			return user, fmt.Errorf("Email or login alreaedy exist")
 		}
 	}
 
-	maxId++
-	user.Id = maxId
+	maxID++
+	user.Id = maxID
 	user.RegisterDate = time.Now()
-	db.users[maxId] = user
+	db.users[maxID] = user
 	return user, nil
 }
 
@@ -109,16 +113,16 @@ func (db *dbMock) GetListById(id int) (model.List, error) {
 }
 
 func (db *dbMock) AddList(list model.List) (model.List, error) {
-	var maxId int
-	for id, _ := range db.lists {
-		if id > maxId {
-			maxId = id
+	var maxID int
+	for id := range db.lists {
+		if id > maxID {
+			maxID = id
 		}
 	}
 
-	maxId++
-	list.Id = maxId
-	db.lists[maxId] = list
+	maxID++
+	list.Id = maxID
+	db.lists[maxID] = list
 	return list, nil
 }
 
@@ -166,16 +170,16 @@ func (db *dbMock) GetAllTodosForUserList(user model.User, list model.List) (mode
 }
 
 func (db *dbMock) AddTodo(todo model.Todo) (model.Todo, error) {
-	var maxId int
-	for id, _ := range db.todos {
-		if id > maxId {
-			maxId = id
+	var maxID int
+	for id := range db.todos {
+		if id > maxID {
+			maxID = id
 		}
 	}
 
-	maxId++
-	todo.Id = maxId
-	db.todos[maxId] = todo
+	maxID++
+	todo.Id = maxID
+	db.todos[maxID] = todo
 	return todo, nil
 }
 

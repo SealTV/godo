@@ -48,52 +48,70 @@ var (
 
 func TestServerRegister(t *testing.T) {
 	e := echo.New()
-	user := model.User{
-		Id:           2,
-		Login:        "Jon",
-		Email:        "jon@mail.com",
-		Password:     "pass",
-		RegisterDate: time.Now(),
-	}
-	f := make(url.Values)
-	f.Set("name", user.Login)
-	f.Set("email", user.Email)
-	f.Set("password", user.Password)
-	req := httptest.NewRequest(echo.POST, "/", strings.NewReader(f.Encode()))
-	req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
-	req.Form = f
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-
 	type args struct {
-		c echo.Context
+		e *echo.Echo
 	}
 	tests := []struct {
 		name    string
 		s       *Server
 		args    args
 		wantErr bool
+		user    model.User
 	}{
 		{
 			name:    "1",
 			s:       &Server{db: mockDB},
-			args:    args{c},
+			args:    args{e},
 			wantErr: false,
+			user: model.User{
+				Id:           2,
+				Login:        "Jon",
+				Email:        "jon@mail.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
+		},
+		{
+			name:    "2",
+			s:       &Server{db: mockDB},
+			args:    args{e},
+			wantErr: true,
+			user: model.User{
+				Id:           2,
+				Login:        "Jon",
+				Email:        "jon@mail.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if assert.NoError(t, tt.s.register(tt.args.c)) {
-				assert.Equal(t, http.StatusCreated, rec.Code)
-				var result model.User
+			f := make(url.Values)
+			f.Set("name", tt.user.Login)
+			f.Set("email", tt.user.Email)
+			f.Set("password", tt.user.Password)
+			req := httptest.NewRequest(echo.POST, "/", strings.NewReader(f.Encode()))
+			req.Header.Set(echo.HeaderContentType, echo.MIMEApplicationJSON)
+			req.Form = f
+			rec := httptest.NewRecorder()
+			c := tt.args.e.NewContext(req, rec)
 
-				if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
-					t.Error(fmt.Errorf("fail"))
+			if assert.NoError(t, tt.s.register(c)) {
+				if tt.wantErr {
+					assert.Equal(t, http.StatusInternalServerError, rec.Code)
+				} else {
+					assert.Equal(t, http.StatusCreated, rec.Code)
+					var result model.User
+
+					if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
+						t.Error(fmt.Errorf("fail"))
+					}
+					assert.Equal(t, tt.user.Id, result.Id)
+					assert.Equal(t, tt.user.Login, result.Login)
+					assert.Equal(t, tt.user.Email, result.Email)
+					assert.Equal(t, tt.user.Password, result.Password)
 				}
-				assert.Equal(t, user.Id, result.Id)
-				assert.Equal(t, user.Login, result.Login)
-				assert.Equal(t, user.Email, result.Email)
-				assert.Equal(t, user.Password, result.Password)
 			}
 		})
 	}
@@ -101,74 +119,128 @@ func TestServerRegister(t *testing.T) {
 
 func TestServerLogin(t *testing.T) {
 	//Setup
-	e := echo.New()
-	user := model.User{
-		Id:           1,
-		Login:        "SealTV",
-		Email:        "seal@test.com",
-		Password:     "pass",
-		RegisterDate: time.Now(),
+	type args struct {
+		e *echo.Echo
 	}
-	q := make(url.Values)
-	q.Set("username", user.Login)
-	q.Set("password", user.Password)
-	req := httptest.NewRequest(echo.GET, "/?"+q.Encode(), nil)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
-	c.SetPath("/users/:email")
-	c.SetParamNames("email")
-	c.SetParamValues("jon@labstack.com")
-	h := &Server{db: mockDB}
+	tests := []struct {
+		name    string
+		s       *Server
+		args    args
+		wantErr bool
+		user    model.User
+	}{
+		{
+			name:    "1",
+			s:       &Server{db: mockDB},
+			args:    args{echo.New()},
+			wantErr: false,
+			user: model.User{
+				Id:           1,
+				Login:        "SealTV",
+				Email:        "seal@test.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
+		},
+		{
+			name:    "2",
+			s:       &Server{db: mockDB},
+			args:    args{echo.New()},
+			wantErr: true,
+			user: model.User{
+				Id:           2,
+				Login:        "Jonn",
+				Email:        "jonn@mail.com",
+				Password:     "passs",
+				RegisterDate: time.Now(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			q := make(url.Values)
+			q.Set("username", tt.user.Login)
+			q.Set("password", tt.user.Password)
+			req := httptest.NewRequest(echo.GET, "/?"+q.Encode(), nil)
+			rec := httptest.NewRecorder()
+			c := tt.args.e.NewContext(req, rec)
+			c.SetPath("/users/:email")
+			c.SetParamNames("email")
+			c.SetParamValues(tt.user.Email)
 
-	token, _ := createJwtToken(user)
-	// Assertions
-	if assert.NoError(t, h.login(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
+			token, _ := createJwtToken(tt.user)
+			// Assertions
+			if assert.NoError(t, tt.s.login(c)) {
+				if tt.wantErr {
+					assert.Equal(t, http.StatusNotFound, rec.Code)
+				} else {
+					assert.Equal(t, http.StatusOK, rec.Code)
 
-		result := struct {
-			Message string `json:"message"`
-			Token   string `json:"token"`
-		}{}
+					result := auth{}
 
-		if err := json.Unmarshal([]byte(rec.Body.String()), &result); err != nil {
-			t.Error(fmt.Errorf("fail"))
-		}
+					if err := json.Unmarshal([]byte(rec.Body.String()), &result); err != nil {
+						t.Error(fmt.Errorf("fail"))
+					}
 
-		assert.Equal(t, token, result.Token)
+					assert.Equal(t, token, result.Token)
+					assert.Equal(t, tt.user.Email, result.User.Email)
+					assert.Equal(t, tt.user.Login, result.User.Login)
+					assert.Equal(t, tt.user.Password, result.User.Password)
+				}
+			}
+		})
 	}
 }
 
 func TestServerMainJwt(t *testing.T) {
 	//Setup
-	e := echo.New()
-
-	user := model.User{
-		Id:           1,
-		Login:        "SealTV",
-		Email:        "seal@test.com",
-		Password:     "pass",
-		RegisterDate: time.Now(),
+	type args struct {
+		e *echo.Echo
 	}
-	token, _ := createJwtToken(user)
+	tests := []struct {
+		name    string
+		s       *Server
+		args    args
+		wantErr bool
+		user    model.User
+	}{
+		{
+			name:    "1",
+			s:       &Server{db: mockDB},
+			args:    args{echo.New()},
+			wantErr: false,
+			user: model.User{
+				Id:           1,
+				Login:        "SealTV",
+				Email:        "seal@test.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			token, _ := createJwtToken(tt.user)
 
-	req := httptest.NewRequest(echo.GET, "/", nil)
-	req.Header.Set(echo.HeaderAuthorization, middleware.DefaultJWTConfig.AuthScheme+" "+token)
-	rec := httptest.NewRecorder()
-	c := e.NewContext(req, rec)
+			req := httptest.NewRequest(echo.GET, "/", nil)
+			req.Header.Set(echo.HeaderAuthorization, middleware.DefaultJWTConfig.AuthScheme+" "+token)
+			rec := httptest.NewRecorder()
+			c := tt.args.e.NewContext(req, rec)
 
-	server := &Server{db: mockDB}
-	jwt := middleware.DefaultJWTConfig
-	jwt.SigningKey = []byte("mySecret")
-	jwt.SigningMethod = "HS512"
-	jwt.Claims = &jwtClaims{}
-	h := middleware.JWTWithConfig(jwt)(server.mainJwt)
+			jwt := middleware.DefaultJWTConfig
+			jwt.SigningKey = []byte("mySecret")
+			jwt.SigningMethod = "HS512"
+			jwt.Claims = &jwtClaims{}
+			h := middleware.JWTWithConfig(jwt)(tt.s.mainJwt)
 
-	// Assertions
-	fmt.Println(token)
-	a := h(c)
-	fmt.Println(a)
-	if assert.NoError(t, h(c)) {
-		assert.Equal(t, http.StatusOK, rec.Code)
-
+			// Assertions
+			if assert.NoError(t, h(c)) {
+				if tt.wantErr {
+					assert.Equal(t, http.StatusNotFound, rec.Code)
+				} else {
+					assert.Equal(t, http.StatusOK, rec.Code)
+				}
+			}
+		})
 	}
 }

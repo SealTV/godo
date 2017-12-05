@@ -40,12 +40,12 @@ func (s *Server) getUserModel(c echo.Context) error {
 func (s *Server) updateUser(c echo.Context) error {
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+		c.String(http.StatusBadRequest, "Invalid value")
 	}
 
 	result, err := s.db.UpdateUser(*user)
 	if err != nil {
-		return c.String(http.StatusFailedDependency, err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
 	}
 	return c.JSON(http.StatusOK, H{"updated": result})
 }
@@ -53,12 +53,12 @@ func (s *Server) updateUser(c echo.Context) error {
 func (s *Server) deleteUser(c echo.Context) error {
 	user := new(model.User)
 	if err := c.Bind(user); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+		c.String(http.StatusBadRequest, "Invalid value")
 	}
 
 	result, err := s.db.DeleteUser(*user)
 	if err != nil {
-		return c.String(http.StatusFailedDependency, err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, H{"DeleteUser": result})
+	return c.JSON(http.StatusOK, H{"delete": result})
 }

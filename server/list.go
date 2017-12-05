@@ -10,17 +10,18 @@ import (
 	"github.com/labstack/gommon/log"
 )
 
+// H - map
 type H map[string]interface{}
 
 func (s *Server) getList(c echo.Context) error {
-	listId, err := strconv.Atoi(c.QueryParam("listId"))
+	listID, err := strconv.Atoi(c.QueryParam("listId"))
 	if err != nil {
 		return c.String(http.StatusBadRequest, "Invalid list id")
 	}
 
-	list, err := s.db.GetUserById(listId)
+	list, err := s.db.GetUserById(listID)
 	if err != nil {
-		return c.String(http.StatusNotFound, fmt.Sprintf("List by id: %d are not found", listId))
+		return c.String(http.StatusNotFound, fmt.Sprintf("List by id: %d are not found", listID))
 	}
 	return c.JSON(http.StatusOK, H{"list": list})
 }

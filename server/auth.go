@@ -24,6 +24,10 @@ type (
 		Password string `json:"password" form:"password" query:"password"`
 	}
 
+	auth struct {
+		Token string     `json:"token"`
+		User  model.User `json:"user"`
+	}
 	customValidator struct {
 		validator *validator.Validate
 	}
@@ -59,10 +63,7 @@ func (s *Server) login(c echo.Context) error {
 		return c.JSON(http.StatusInternalServerError, "something went wrong")
 	}
 
-	return c.JSON(http.StatusOK, map[string]string{
-		"message": "You were logged in!",
-		"token":   token,
-	})
+	return c.JSON(http.StatusOK, auth{token, user})
 }
 
 func (s *Server) mainJwt(c echo.Context) error {

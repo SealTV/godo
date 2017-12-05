@@ -8,10 +8,12 @@ import (
 	"github.com/labstack/echo/middleware"
 )
 
+//Server - server object
 type Server struct {
 	db data.DBConnector
 }
 
+// RunServer - start working
 func RunServer(db data.DBConnector) {
 	e := echo.New()
 	s := Server{db}
