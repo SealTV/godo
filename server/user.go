@@ -45,7 +45,7 @@ func (s *Server) updateUser(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, H{"updated": result})
+	return c.JSON(http.StatusOK, result)
 }
 
 func (s *Server) deleteUser(c echo.Context) error {
@@ -58,5 +58,5 @@ func (s *Server) deleteUser(c echo.Context) error {
 	if err != nil {
 		return c.String(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, H{"delete": result})
+	return c.JSON(http.StatusOK, result)
 }
