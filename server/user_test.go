@@ -15,8 +15,6 @@ import (
 )
 
 func TestServer_getUser(t *testing.T) {
-	var db dbMock
-	db = *mockDBDefaultInstance
 	e := echo.New()
 	type args struct {
 		e    *echo.Echo
@@ -30,13 +28,13 @@ func TestServer_getUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -70,8 +68,6 @@ func TestServer_getUser(t *testing.T) {
 }
 
 func TestServer_getUserModel(t *testing.T) {
-	var db dbMock
-	db = *mockDBDefaultInstance
 	e := echo.New()
 	type args struct {
 		e    *echo.Echo
@@ -85,13 +81,13 @@ func TestServer_getUserModel(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -127,8 +123,6 @@ func TestServer_getUserModel(t *testing.T) {
 }
 
 func TestServer_updateUser(t *testing.T) {
-	var db dbMock
-	db = *mockDBDefaultInstance
 	e := echo.New()
 	type args struct {
 		e    *echo.Echo
@@ -142,13 +136,13 @@ func TestServer_updateUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -167,7 +161,6 @@ func TestServer_updateUser(t *testing.T) {
 				} else {
 					assert.Equal(t, http.StatusOK, rec.Code)
 					var result int
-
 					if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
 						t.Error(fmt.Errorf("fail"))
 					}
@@ -179,8 +172,6 @@ func TestServer_updateUser(t *testing.T) {
 }
 
 func TestServer_deleteUser(t *testing.T) {
-	var db dbMock
-	db = *mockDBDefaultInstance
 	e := echo.New()
 	type args struct {
 		e    *echo.Echo
@@ -194,13 +185,13 @@ func TestServer_deleteUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},

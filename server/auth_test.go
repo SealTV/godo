@@ -18,8 +18,7 @@ import (
 
 func TestServerRegister(t *testing.T) {
 	//Setup
-	var db dbMock
-	db = *mockDBDefaultInstance
+	db := getDefaultDBInstance()
 	e := echo.New()
 	type args struct {
 		e *echo.Echo
@@ -33,7 +32,7 @@ func TestServerRegister(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: db},
 			args:    args{e},
 			wantErr: false,
 			user: model.User{
@@ -46,7 +45,7 @@ func TestServerRegister(t *testing.T) {
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: db},
 			args:    args{e},
 			wantErr: true,
 			user: model.User{
@@ -92,8 +91,6 @@ func TestServerRegister(t *testing.T) {
 
 func TestServerLogin(t *testing.T) {
 	//Setup
-	var db dbMock
-	db = *mockDBDefaultInstance
 	type args struct {
 		e *echo.Echo
 	}
@@ -106,7 +103,7 @@ func TestServerLogin(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{
@@ -119,7 +116,7 @@ func TestServerLogin(t *testing.T) {
 		},
 		{
 			name:    "2",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: true,
 			user: model.User{
@@ -169,8 +166,6 @@ func TestServerLogin(t *testing.T) {
 
 func TestServerMainJwt(t *testing.T) {
 	//Setup
-	var db dbMock
-	db = *mockDBDefaultInstance
 	type args struct {
 		e *echo.Echo
 	}
@@ -183,7 +178,7 @@ func TestServerMainJwt(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: &db},
+			s:       &Server{db: getDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{

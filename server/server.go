@@ -43,7 +43,7 @@ func RunServer(db data.DBConnector) {
 	jwtGroup.DELETE("/user/:id", s.deleteUser)
 
 	// list
-	jwtGroup.GET("/list", s.getList)
+	jwtGroup.GET("/list", s.getLists)
 	jwtGroup.POST("/list", s.addList)
 	jwtGroup.DELETE("/list/:id", s.deleteList)
 
@@ -63,7 +63,7 @@ func RunServer(db data.DBConnector) {
 	})
 
 	e.File("/index", "static/index.html")
-	e.File("/todo", "static/todo.html")
+	e.File("/list", "static/list.html")
 
 	e.Logger.Fatal(e.Start(":1323"))
 }
