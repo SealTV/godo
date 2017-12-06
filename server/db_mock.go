@@ -10,6 +10,36 @@ type dbMock struct {
 	todos map[int]model.Todo
 }
 
+var (
+	mockDB = &dbMock{
+		users: map[int]model.User{
+			1: {
+				Id:           1,
+				Login:        "SealTV",
+				Email:        "seal@test.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
+		},
+		lists: map[int]model.List{
+			1: {
+				Id:     1,
+				Name:   "List",
+				UserId: 1,
+			},
+		},
+		todos: map[int]model.Todo{
+			1: {
+				Id:          1,
+				Title:       "todo1",
+				Description: "Todo desc",
+				ListId:      1,
+				UserId:      1,
+			},
+		},
+	}
+)
+
 func (db *dbMock) GetUserModel(id int) (model.UserModel, error) {
 	return model.UserModel{}, nil
 }

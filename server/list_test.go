@@ -6,29 +6,7 @@ import (
 	"github.com/labstack/echo"
 )
 
-func TestServer_getUser(t *testing.T) {
-	e := echo.New()
-	type args struct {
-		e *echo.Echo
-	}
-	tests := []struct {
-		name    string
-		s       *Server
-		args    args
-		wantErr bool
-	}{
-	// TODO: Add test cases.
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.getUser(tt.s.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.getUser() error = %v, wantErr %v", err, tt.wantErr)
-			}
-		})
-	}
-}
-
-func TestServer_getUserModel(t *testing.T) {
+func TestServer_getList(t *testing.T) {
 	type args struct {
 		c echo.Context
 	}
@@ -42,14 +20,14 @@ func TestServer_getUserModel(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.getUserModel(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.getUserModel() error = %v, wantErr %v", err, tt.wantErr)
+			if err := tt.s.getList(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("Server.getList() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestServer_updateUser(t *testing.T) {
+func TestServer_addList(t *testing.T) {
 	type args struct {
 		c echo.Context
 	}
@@ -63,14 +41,14 @@ func TestServer_updateUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.updateUser(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.updateUser() error = %v, wantErr %v", err, tt.wantErr)
+			if err := tt.s.addList(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("Server.addList() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
 }
 
-func TestServer_deleteUser(t *testing.T) {
+func TestServer_updateList(t *testing.T) {
 	type args struct {
 		c echo.Context
 	}
@@ -84,8 +62,29 @@ func TestServer_deleteUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if err := tt.s.deleteUser(tt.args.c); (err != nil) != tt.wantErr {
-				t.Errorf("Server.deleteUser() error = %v, wantErr %v", err, tt.wantErr)
+			if err := tt.s.updateList(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("Server.updateList() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+func TestServer_deleteList(t *testing.T) {
+	type args struct {
+		c echo.Context
+	}
+	tests := []struct {
+		name    string
+		s       *Server
+		args    args
+		wantErr bool
+	}{
+	// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if err := tt.s.deleteList(tt.args.c); (err != nil) != tt.wantErr {
+				t.Errorf("Server.deleteList() error = %v, wantErr %v", err, tt.wantErr)
 			}
 		})
 	}
