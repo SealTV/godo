@@ -2,20 +2,18 @@ package server
 
 import (
 	"net/http"
-	"strconv"
 
 	"bitbucket.org/SealTV/go-site/model"
-	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 )
 
 func (s *Server) getUser(c echo.Context) error {
-	token := c.Get("user").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	u := new(model.User)
+	if err := c.Bind(u); err != nil {
+		c.String(http.StatusFailedDependency, "Invalid value")
+	}
 
-	id, _ := strconv.Atoi(claims["jti"].(string))
-	user, err := s.db.GetUserById(id)
-
+	user, err := s.db.GetUserById(u.Id)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "User not found")
 	}
@@ -24,12 +22,12 @@ func (s *Server) getUser(c echo.Context) error {
 }
 
 func (s *Server) getUserModel(c echo.Context) error {
-	token := c.Get("user").(*jwt.Token)
-	claims := token.Claims.(jwt.MapClaims)
+	u := new(model.User)
+	if err := c.Bind(u); err != nil {
+		c.String(http.StatusFailedDependency, "Invalid value")
+	}
 
-	id, _ := strconv.Atoi(claims["jti"].(string))
-	user, err := s.db.GetUserModel(id)
-
+	user, err := s.db.GetUserModel(u.Id)
 	if err != nil {
 		return c.String(http.StatusBadRequest, "User not found")
 	}
@@ -38,27 +36,27 @@ func (s *Server) getUserModel(c echo.Context) error {
 }
 
 func (s *Server) updateUser(c echo.Context) error {
-	user := new(model.User)
-	if err := c.Bind(user); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+	u := new(model.User)
+	if err := c.Bind(u); err != nil {
+		c.String(http.StatusBadRequest, "Invalid value")
 	}
 
-	result, err := s.db.UpdateUser(*user)
+	result, err := s.db.UpdateUser(*u)
 	if err != nil {
-		return c.String(http.StatusFailedDependency, err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, H{"updated": result})
+	return c.JSON(http.StatusOK, result)
 }
 
 func (s *Server) deleteUser(c echo.Context) error {
-	user := new(model.User)
-	if err := c.Bind(user); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+	u := new(model.User)
+	if err := c.Bind(u); err != nil {
+		c.String(http.StatusBadRequest, "Invalid value")
 	}
 
-	result, err := s.db.DeleteUser(*user)
+	result, err := s.db.DeleteUser(*u)
 	if err != nil {
-		return c.String(http.StatusFailedDependency, err.Error())
+		return c.String(http.StatusBadRequest, err.Error())
 	}
-	return c.JSON(http.StatusOK, H{"DeleteUser": result})
+	return c.JSON(http.StatusOK, result)
 }

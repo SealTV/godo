@@ -1,8 +1,10 @@
 package server
 
-import "bitbucket.org/SealTV/go-site/model"
-import "fmt"
-import "time"
+import (
+	"time"
+	"bitbucket.org/SealTV/go-site/model"
+	"fmt"
+)
 
 type dbMock struct {
 	users map[int]model.User
@@ -10,12 +12,67 @@ type dbMock struct {
 	todos map[int]model.Todo
 }
 
+func getDefaultDBInstance() *dbMock{
+	return &dbMock{
+		users: map[int]model.User{
+			1: {
+				Id:           1,
+				Login:        "SealTV",
+				Email:        "seal@test.com",
+				Password:     "pass",
+				RegisterDate: time.Now(),
+			},
+		},
+		lists: map[int]model.List{
+			1: {
+				Id:     1,
+				Name:   "List",
+				UserId: 1,
+			},
+		},
+		todos: map[int]model.Todo{
+			1: {
+				Id:          1,
+				Title:       "todo1",
+				Description: "Todo desc",
+				ListId:      1,
+				UserId:      1,
+			},
+		},
+	}
+}
+
 func (db *dbMock) GetUserModel(id int) (model.UserModel, error) {
-	return model.UserModel{}, nil
+	user, err := db.GetUserById(id)
+	if err != nil {
+		return model.UserModel{}, err
+	}
+
+	var todoLists []model.TodoListModel
+	if lists, err := db.GetAllListsForUser(user); err == nil {
+		for _, l := range lists {
+			todos, err := db.GetAllTodosForUserList(user, l)
+			if err != nil {
+				return model.UserModel{}, err
+			}
+			todoLists = append(todoLists, model.TodoListModel{
+				List:  l,
+				Todos: todos,
+			})
+		}
+	} else {
+		return model.UserModel{}, err
+	}
+
+	result := model.UserModel{
+		User:      user,
+		TodoLists: todoLists,
+	}
+	return result, nil
 }
 
 func (db *dbMock) GetAllUsers() (model.UsersCollection, error) {
-	result := make([]model.User, len(db.users))
+	result := make([]model.User, 0)
 	for _, user := range db.users {
 		result = append(result, user)
 	}
@@ -23,8 +80,10 @@ func (db *dbMock) GetAllUsers() (model.UsersCollection, error) {
 }
 
 func (db *dbMock) GetUserById(id int) (model.User, error) {
-	if user, b := db.users[id]; b {
-		return user, nil
+	for _, user := range db.users {
+		if user.Id == id {
+			return user, nil
+		}
 	}
 
 	return model.User{}, fmt.Errorf("User not found")
@@ -41,39 +100,59 @@ func (db *dbMock) GetUserByLoginAndPassword(login, password string) (model.User,
 }
 
 func (db *dbMock) AddUser(user model.User) (model.User, error) {
-	var maxId int
-	for id, _ := range db.users {
-		if id > maxId {
-			maxId = id
+	var maxID int
+	for id, u := range db.users {
+		if id > maxID {
+			maxID = id
+		}
+
+		if u.Email == user.Email || u.Login == user.Login {
+			return user, fmt.Errorf("Email or login alreaedy exist")
 		}
 	}
 
-	maxId++
-	user.Id = maxId
+	maxID++
+	user.Id = maxID
 	user.RegisterDate = time.Now()
-	db.users[maxId] = user
+	db.users[maxID] = user
 	return user, nil
 }
 
 func (db *dbMock) UpdateUser(user model.User) (int64, error) {
-	db.users[user.Id] = user
-	return 1, nil
+	for i, u := range db.users	{
+		if u.Id == user.Id{
+			db.users[i] = user
+			return 1, nil
+		}
+	}
+
+	return -1, fmt.Errorf("User %d not found", user.Id)
 }
 
 func (db *dbMock) DeleteUser(user model.User) (int64, error) {
-	delete(db.users, user.Id)
+	for i, u := range db.users	{
+		if u.Id == user.Id{
+			delete(db.users, i)
+			return 1, nil
+		}
+	}
 
-	return 1, nil
+	return -1, fmt.Errorf("User %d not found", user.Id)
 }
 
 func (db *dbMock) DeleteUserById(user int) (int64, error) {
-	delete(db.users, user)
+	for i, u := range db.users {
+		if u.Id == user {
+			delete(db.users, i)
+			return 1, nil
+		}
+	}
 
-	return 1, nil
+	return -1, fmt.Errorf("User %d not found", user)
 }
 
 func (db *dbMock) GetAllLists() (model.ListsCollection, error) {
-	result := make([]model.List, len(db.lists))
+	result := make([]model.List, 0)
 	for _, list := range db.lists {
 		result = append(result, list)
 	}
@@ -81,7 +160,7 @@ func (db *dbMock) GetAllLists() (model.ListsCollection, error) {
 }
 
 func (db *dbMock) GetAllListsForUser(user model.User) (model.ListsCollection, error) {
-	result := make([]model.List, len(db.lists))
+	result := make([]model.List, 0)
 	for _, list := range db.lists {
 		if list.UserId == user.Id {
 			result = append(result, list)
@@ -91,7 +170,7 @@ func (db *dbMock) GetAllListsForUser(user model.User) (model.ListsCollection, er
 }
 
 func (db *dbMock) GetAllListsForUserId(user int) (model.ListsCollection, error) {
-	result := make([]model.List, len(db.lists))
+	result := make([]model.List, 0)
 	for _, list := range db.lists {
 		if list.UserId == user {
 			result = append(result, list)
@@ -109,16 +188,21 @@ func (db *dbMock) GetListById(id int) (model.List, error) {
 }
 
 func (db *dbMock) AddList(list model.List) (model.List, error) {
-	var maxId int
-	for id, _ := range db.lists {
-		if id > maxId {
-			maxId = id
+	_, err := db.GetUserById(list.UserId)
+	if err != nil{
+		return  list, err
+	}
+
+	var maxID int
+	for id := range db.lists {
+		if id > maxID {
+			maxID = id
 		}
 	}
 
-	maxId++
-	list.Id = maxId
-	db.lists[maxId] = list
+	maxID++
+	list.Id = maxID
+	db.lists[maxID] = list
 	return list, nil
 }
 
@@ -139,14 +223,14 @@ func (db *dbMock) DeleteListById(list int) (int64, error) {
 
 func (db *dbMock) GetAllTodos() (model.TodoCollection, error) {
 	result := make([]model.Todo, len(db.todos))
-	for _, todo := range db.todos {
-		result = append(result, todo)
+	for i, todo := range db.todos {
+		result[i] = todo
 	}
 	return result, nil
 }
 
 func (db *dbMock) GetAllTodosForUser(user model.User) (model.TodoCollection, error) {
-	result := make([]model.Todo, len(db.todos))
+	result := make([]model.Todo, 0)
 	for _, todo := range db.todos {
 		if todo.UserId == user.Id {
 			result = append(result, todo)
@@ -156,7 +240,7 @@ func (db *dbMock) GetAllTodosForUser(user model.User) (model.TodoCollection, err
 }
 
 func (db *dbMock) GetAllTodosForUserList(user model.User, list model.List) (model.TodoCollection, error) {
-	result := make([]model.Todo, len(db.todos))
+	result := make([]model.Todo, 0)
 	for _, todo := range db.todos {
 		if todo.UserId == user.Id && todo.ListId == list.Id {
 			result = append(result, todo)
@@ -166,16 +250,26 @@ func (db *dbMock) GetAllTodosForUserList(user model.User, list model.List) (mode
 }
 
 func (db *dbMock) AddTodo(todo model.Todo) (model.Todo, error) {
-	var maxId int
-	for id, _ := range db.todos {
-		if id > maxId {
-			maxId = id
+	_, err := db.GetUserById(todo.UserId)
+	if err != nil{
+		return  todo, err
+	}
+
+	_, err = db.GetListById(todo.ListId)
+	if err != nil{
+		return  todo, err
+	}
+
+	var maxID int
+	for id := range db.todos {
+		if id > maxID {
+			maxID = id
 		}
 	}
 
-	maxId++
-	todo.Id = maxId
-	db.todos[maxId] = todo
+	maxID++
+	todo.Id = maxID
+	db.todos[maxID] = todo
 	return todo, nil
 }
 
