@@ -18,7 +18,7 @@ import (
 
 func TestServerRegister(t *testing.T) {
 	//Setup
-	db := getDefaultDBInstance()
+	db := GetDefaultDBInstance()
 	e := echo.New()
 	type args struct {
 		e *echo.Echo
@@ -103,7 +103,7 @@ func TestServerLogin(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{
@@ -116,7 +116,7 @@ func TestServerLogin(t *testing.T) {
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: true,
 			user: model.User{
@@ -178,7 +178,7 @@ func TestServerMainJwt(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{

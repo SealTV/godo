@@ -3,14 +3,14 @@ package server
 import (
 	"testing"
 
-	"github.com/labstack/echo"
 	"bitbucket.org/SealTV/go-site/model"
 	"encoding/json"
+	"fmt"
+	"github.com/labstack/echo"
+	"github.com/stretchr/testify/assert"
+	"net/http"
 	"net/http/httptest"
 	"strings"
-	"github.com/stretchr/testify/assert"
-	"fmt"
-	"net/http"
 	"time"
 )
 
@@ -28,13 +28,13 @@ func TestServer_getList(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -77,9 +77,9 @@ func TestServer_addList(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "1",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
 				UserId: 1,
@@ -87,9 +87,9 @@ func TestServer_addList(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "2",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",
 				UserId: -1,
@@ -136,9 +136,9 @@ func TestServer_updateList(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "1",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
 				UserId: 1,
@@ -146,9 +146,9 @@ func TestServer_updateList(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "2",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",
 				UserId: 1,
@@ -189,9 +189,9 @@ func TestServer_deleteList(t *testing.T) {
 		wantErr bool
 	}{
 		{
-			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "1",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
 				UserId: 1,
@@ -199,9 +199,9 @@ func TestServer_deleteList(t *testing.T) {
 			wantErr: false,
 		},
 		{
-			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
-			args:    args{e, model.List{
+			name: "2",
+			s:    &Server{db: GetDefaultDBInstance()},
+			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",
 				UserId: 1,
