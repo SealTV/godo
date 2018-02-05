@@ -6,12 +6,14 @@ import (
 	"testing"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/model"
-	"github.com/labstack/echo"
 	"encoding/json"
-	"github.com/stretchr/testify/assert"
 	"fmt"
 	"net/http"
+
+	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/model"
+	"github.com/labstack/echo"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestServer_getUser(t *testing.T) {
@@ -28,13 +30,13 @@ func TestServer_getUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -81,13 +83,13 @@ func TestServer_getUserModel(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -114,8 +116,8 @@ func TestServer_getUserModel(t *testing.T) {
 					assert.Equal(t, tt.args.user.Login, result.Login)
 					assert.Equal(t, tt.args.user.Email, result.Email)
 					assert.Equal(t, tt.args.user.Password, result.Password)
-					assert.Equal(t, 1, len (result.TodoLists))
-					assert.Equal(t, 1, len (result.TodoLists[0].Todos))
+					assert.Equal(t, 1, len(result.TodoLists))
+					assert.Equal(t, 1, len(result.TodoLists[0].Todos))
 				}
 			}
 		})
@@ -136,13 +138,13 @@ func TestServer_updateUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -185,13 +187,13 @@ func TestServer_deleteUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: getDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},

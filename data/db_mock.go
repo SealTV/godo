@@ -1,4 +1,4 @@
-package server
+package data
 
 import (
 	"fmt"
@@ -13,7 +13,7 @@ type dbMock struct {
 	todos map[int]model.Todo
 }
 
-func getDefaultDBInstance() *dbMock {
+func initMock() *dbMock {
 	return &dbMock{
 		users: map[int]model.User{
 			1: {
