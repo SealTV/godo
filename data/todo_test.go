@@ -73,7 +73,7 @@ func TestGetAllTodos(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 
@@ -167,7 +167,7 @@ func TestGetAllTodosForUser(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 
@@ -256,7 +256,7 @@ func TestGetAllTodosForUserList(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 			expectQuery := mock.ExpectQuery("SELECT (.+) FROM todos WHERE (.+)").WithArgs(tt.args.user.Id, tt.args.list.Id)
@@ -297,7 +297,7 @@ func TestAddTodo(t *testing.T) {
 	}
 	defer db.Close()
 
-	connector := new(postgresConnector)
+	connector := new(pgConnector)
 	connector.DB = db
 
 	type fields struct {
@@ -346,7 +346,7 @@ func TestAddTodo(t *testing.T) {
 				excpectQuery.WillReturnRows(rs)
 			}
 
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 			got, err := db.AddTodo(tt.args)
@@ -409,7 +409,7 @@ func TestUpdateTodo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 			expectExec := mock.ExpectExec(`UPDATE todos`)
@@ -477,7 +477,7 @@ func TestDeleteTodo(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 
@@ -530,7 +530,7 @@ func TestDeleteTodoById(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			db := &postgresConnector{
+			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
 

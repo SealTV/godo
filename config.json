@@ -1,0 +1,17 @@
+{
+    "server" : {
+        "secret" : "my_secret",
+        "host": "localhost",
+        "port": 8080
+    },
+    "db": {
+        "use_debug_db": false,
+        "host": "localhost",
+        "post": 5432,
+        "user": "postgres",
+        "passprod": "postgres",
+        "scheme": "public",
+        "db_name": "todo_db",
+        "ssl_mode": "disable"
+    }
+}

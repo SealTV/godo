@@ -19,13 +19,13 @@ func TestGetAllLists(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		want    model.ListsCollection
 		wantErr bool
 	}{
 		{name: "1",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.List{
 				model.List{Id: 1, Name: "Some name 1", UserId: 1},
@@ -34,7 +34,7 @@ func TestGetAllLists(t *testing.T) {
 			wantErr: false,
 		},
 		{name: "2",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.List{
 				model.List{Id: 1, Name: "Some name 1", UserId: 1},
@@ -84,14 +84,14 @@ func TestGetAllListsForUser(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.ListsCollection
 		wantErr bool
 	}{
 		{name: "1",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want: []model.List{
@@ -101,7 +101,7 @@ func TestGetAllListsForUser(t *testing.T) {
 			wantErr: false,
 		},
 		{name: "2",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want: []model.List{
@@ -152,14 +152,14 @@ func TestGetAllListsForUserId(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.ListsCollection
 		wantErr bool
 	}{
 		{name: "1",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{user: 1},
 			want: []model.List{
@@ -169,7 +169,7 @@ func TestGetAllListsForUserId(t *testing.T) {
 			wantErr: false,
 		},
 		{name: "2",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{user: 1},
 			want: []model.List{
@@ -220,21 +220,21 @@ func TestGetListById(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.List
 		wantErr bool
 	}{
 		{name: "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
 			want:    model.List{Id: 1, Name: "Some name 1", UserId: 1},
 			wantErr: false,
 		},
 		{name: "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
 			want:    model.List{Id: 1, Name: "Some name 1", UserId: 1},
@@ -279,7 +279,7 @@ func TestAddList(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.List
@@ -287,7 +287,7 @@ func TestAddList(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
 			want:    model.List{Id: 1, Name: "Some list", UserId: 1},
@@ -295,7 +295,7 @@ func TestAddList(t *testing.T) {
 		},
 		{
 			name:    "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
 			want:    model.List{Id: 1, Name: "Some list", UserId: 1},
@@ -341,21 +341,21 @@ func TestUpdateList(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    int64
 		wantErr bool
 	}{
 		{name: "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
 			want:    1,
 			wantErr: false,
 		},
 		{name: "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
 			want:    1,
@@ -398,7 +398,7 @@ func TestDeleteList(t *testing.T) {
 	}
 	tests := []struct {
 		name     string
-		db       *postgresConnector
+		db       *pgConnector
 		mock     sqlmock.Sqlmock
 		args     args
 		want     int64
@@ -407,7 +407,7 @@ func TestDeleteList(t *testing.T) {
 		wantErr3 bool
 	}{
 		{name: "1",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
 			want:     1,
@@ -416,7 +416,7 @@ func TestDeleteList(t *testing.T) {
 			wantErr3: false,
 		},
 		{name: "2",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
 			want:     1,
@@ -425,7 +425,7 @@ func TestDeleteList(t *testing.T) {
 			wantErr3: false,
 		},
 		{name: "3",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
 			want:     1,
@@ -434,7 +434,7 @@ func TestDeleteList(t *testing.T) {
 			wantErr3: false,
 		},
 		{name: "4",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
 			want:     1,

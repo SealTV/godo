@@ -19,13 +19,13 @@ func TestGetAllUsers(t *testing.T) {
 
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		want    model.UsersCollection
 		wantErr bool
 	}{
 		{name: "1",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.User{
 				model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -34,7 +34,7 @@ func TestGetAllUsers(t *testing.T) {
 			wantErr: false,
 		},
 		{name: "2",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.User{
 				model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -85,21 +85,21 @@ func TestGetUserById(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.User
 		wantErr bool
 	}{
 		{name: "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{name: "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 2},
 			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -147,7 +147,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.User
@@ -155,7 +155,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -163,7 +163,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 		},
 		{
 			name:    "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "some1@email.com", password: "Some pass"},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -171,7 +171,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 		},
 		{
 			name:    "3",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
 			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -219,7 +219,7 @@ func TestAddUser(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    model.User
@@ -227,7 +227,7 @@ func TestAddUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -235,7 +235,7 @@ func TestAddUser(t *testing.T) {
 		},
 		{
 			name:    "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -243,7 +243,7 @@ func TestAddUser(t *testing.T) {
 		},
 		{
 			name:    "3",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
 			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
@@ -291,7 +291,7 @@ func TestUpdateUser(t *testing.T) {
 	}
 	tests := []struct {
 		name    string
-		db      *postgresConnector
+		db      *pgConnector
 		mock    sqlmock.Sqlmock
 		args    args
 		want    int64
@@ -299,7 +299,7 @@ func TestUpdateUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
@@ -307,7 +307,7 @@ func TestUpdateUser(t *testing.T) {
 		},
 		{
 			name:    "2",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
@@ -315,7 +315,7 @@ func TestUpdateUser(t *testing.T) {
 		},
 		{
 			name:    "3",
-			db:      &postgresConnector{db},
+			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
@@ -362,7 +362,7 @@ func TestDeleteUser(t *testing.T) {
 	}
 	tests := []struct {
 		name     string
-		db       *postgresConnector
+		db       *pgConnector
 		mock     sqlmock.Sqlmock
 		args     args
 		want     int64
@@ -373,7 +373,7 @@ func TestDeleteUser(t *testing.T) {
 	}{
 		{
 			name:     "1",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
@@ -384,7 +384,7 @@ func TestDeleteUser(t *testing.T) {
 		},
 		{
 			name:     "2",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
@@ -395,7 +395,7 @@ func TestDeleteUser(t *testing.T) {
 		},
 		{
 			name:     "3",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
@@ -406,7 +406,7 @@ func TestDeleteUser(t *testing.T) {
 		},
 		{
 			name:     "4",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
@@ -417,7 +417,7 @@ func TestDeleteUser(t *testing.T) {
 		},
 		{
 			name:     "5",
-			db:       &postgresConnector{db},
+			db:       &pgConnector{db},
 			mock:     mock,
 			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,

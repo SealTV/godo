@@ -7,7 +7,7 @@ import (
 )
 
 // GetAllLists return list of all List in table
-func (db *postgresConnector) GetAllLists() (model.ListsCollection, error) {
+func (db *pgConnector) GetAllLists() (model.ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists")
 	if err != nil {
 		return nil, err
@@ -17,12 +17,12 @@ func (db *postgresConnector) GetAllLists() (model.ListsCollection, error) {
 }
 
 // GetAllListsForUser return user lists
-func (db *postgresConnector) GetAllListsForUser(user model.User) (model.ListsCollection, error) {
+func (db *pgConnector) GetAllListsForUser(user model.User) (model.ListsCollection, error) {
 	return db.GetAllListsForUserId(user.Id)
 }
 
 // GetAllListsForUserId return user lists
-func (db *postgresConnector) GetAllListsForUserId(user int) (model.ListsCollection, error) {
+func (db *pgConnector) GetAllListsForUserId(user int) (model.ListsCollection, error) {
 	rows, err := db.Query("SELECT * FROM lists WHERE user_id = $1", user)
 	if err != nil {
 		return nil, err
@@ -31,7 +31,7 @@ func (db *postgresConnector) GetAllListsForUserId(user int) (model.ListsCollecti
 	return parseListsRows(rows)
 }
 
-func (db *postgresConnector) GetListById(id int) (model.List, error) {
+func (db *pgConnector) GetListById(id int) (model.List, error) {
 	var list model.List
 	err := db.QueryRow(`SELECT * FROM lists WHERE id = $1`, id).Scan(&list.Id, &list.Name, &list.UserId)
 	if err != nil {
@@ -41,7 +41,7 @@ func (db *postgresConnector) GetListById(id int) (model.List, error) {
 	return list, nil
 }
 
-func (db *postgresConnector) AddList(list model.List) (model.List, error) {
+func (db *pgConnector) AddList(list model.List) (model.List, error) {
 	err := db.QueryRow(`INSERT INTO lists(name, user_id) VALUES($1, $2) RETURNING id`, list.Name, list.UserId).Scan(&list.Id)
 	if err != nil {
 		return list, err
@@ -50,7 +50,7 @@ func (db *postgresConnector) AddList(list model.List) (model.List, error) {
 	return list, nil
 }
 
-func (db *postgresConnector) UpdateList(list model.List) (int64, error) {
+func (db *pgConnector) UpdateList(list model.List) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE lists SET name = $2, user_id = $3 WHERE id = $1`,
 		list.Id, list.Name, list.UserId)
@@ -60,11 +60,11 @@ func (db *postgresConnector) UpdateList(list model.List) (int64, error) {
 	return r.RowsAffected()
 }
 
-func (db *postgresConnector) DeleteList(list model.List) (int64, error) {
+func (db *pgConnector) DeleteList(list model.List) (int64, error) {
 	return db.DeleteListById(list.Id)
 }
 
-func (db *postgresConnector) DeleteListById(list int) (int64, error) {
+func (db *pgConnector) DeleteListById(list int) (int64, error) {
 	tx, err := db.Begin()
 	r, err := tx.Exec(`DELETE FROM todos WHERE list_id = $1`, list)
 	if err != nil {

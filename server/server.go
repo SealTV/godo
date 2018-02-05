@@ -1,6 +1,7 @@
 package server
 
 import (
+	"fmt"
 	"net/http"
 
 	"bitbucket.org/SealTV/go-site/data"
@@ -11,12 +12,19 @@ import (
 //Server - server object
 type Server struct {
 	db data.DBConnector
+	e  *echo.Echo
+	c  Config
 }
 
-// RunServer - start working
-func RunServer(db data.DBConnector) {
+type Config struct {
+	SecretKey string `json:"secret"`
+	Host      string `json:"host"`
+	Port      int    `json:"port"`
+}
+
+func New(db data.DBConnector, c Config) *Server {
 	e := echo.New()
-	s := Server{db}
+	s := Server{db, e, c}
 	adminGroup := e.Group("/admin")
 
 	e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
@@ -32,7 +40,7 @@ func RunServer(db data.DBConnector) {
 	jwtGroup := e.Group("/jwt")
 	jwtGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningMethod: "HS512",
-		SigningKey:    []byte("mySecret"),
+		SigningKey:    []byte(c.SecretKey),
 	}))
 
 	jwtGroup.GET("/main", s.mainJwt)
@@ -65,5 +73,11 @@ func RunServer(db data.DBConnector) {
 	e.File("/index", "static/index.html")
 	e.File("/list", "static/list.html")
 
-	e.Logger.Fatal(e.Start(":1323"))
+	e.Logger.Fatal(e.Start(fmt.Sprintf("%s:%d", c.Host, c.Port)))
+
+	return &s
+}
+
+func (s *Server) Run() {
+	s.e.Logger.Fatal(s.e.Start(fmt.Sprintf("%s:%d", s.c.Host, s.c.Port)))
 }

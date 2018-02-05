@@ -1,9 +1,10 @@
 package server
 
 import (
-	"time"
-	"bitbucket.org/SealTV/go-site/model"
 	"fmt"
+	"time"
+
+	"bitbucket.org/SealTV/go-site/model"
 )
 
 type dbMock struct {
@@ -12,7 +13,7 @@ type dbMock struct {
 	todos map[int]model.Todo
 }
 
-func getDefaultDBInstance() *dbMock{
+func getDefaultDBInstance() *dbMock {
 	return &dbMock{
 		users: map[int]model.User{
 			1: {
@@ -119,8 +120,8 @@ func (db *dbMock) AddUser(user model.User) (model.User, error) {
 }
 
 func (db *dbMock) UpdateUser(user model.User) (int64, error) {
-	for i, u := range db.users	{
-		if u.Id == user.Id{
+	for i, u := range db.users {
+		if u.Id == user.Id {
 			db.users[i] = user
 			return 1, nil
 		}
@@ -130,8 +131,8 @@ func (db *dbMock) UpdateUser(user model.User) (int64, error) {
 }
 
 func (db *dbMock) DeleteUser(user model.User) (int64, error) {
-	for i, u := range db.users	{
-		if u.Id == user.Id{
+	for i, u := range db.users {
+		if u.Id == user.Id {
 			delete(db.users, i)
 			return 1, nil
 		}
@@ -189,8 +190,8 @@ func (db *dbMock) GetListById(id int) (model.List, error) {
 
 func (db *dbMock) AddList(list model.List) (model.List, error) {
 	_, err := db.GetUserById(list.UserId)
-	if err != nil{
-		return  list, err
+	if err != nil {
+		return list, err
 	}
 
 	var maxID int
@@ -251,13 +252,13 @@ func (db *dbMock) GetAllTodosForUserList(user model.User, list model.List) (mode
 
 func (db *dbMock) AddTodo(todo model.Todo) (model.Todo, error) {
 	_, err := db.GetUserById(todo.UserId)
-	if err != nil{
-		return  todo, err
+	if err != nil {
+		return todo, err
 	}
 
 	_, err = db.GetListById(todo.ListId)
-	if err != nil{
-		return  todo, err
+	if err != nil {
+		return todo, err
 	}
 
 	var maxID int
