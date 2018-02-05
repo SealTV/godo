@@ -30,13 +30,13 @@ func TestServer_getList(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: data.GetDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: data.GetDefaultDBInstance()},
+			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -80,7 +80,7 @@ func TestServer_addList(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
@@ -90,7 +90,7 @@ func TestServer_addList(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",
@@ -139,7 +139,7 @@ func TestServer_updateList(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
@@ -149,7 +149,7 @@ func TestServer_updateList(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",
@@ -192,7 +192,7 @@ func TestServer_deleteList(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     1,
 				Name:   "List",
@@ -202,7 +202,7 @@ func TestServer_deleteList(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: data.GetDefaultDBInstance()},
+			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.List{
 				Id:     -1,
 				Name:   "List",

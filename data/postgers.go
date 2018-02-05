@@ -72,7 +72,7 @@ type pgConnector struct {
 
 func New(c Config) DBConnector {
 	if c.UserDebugDB {
-		return nil
+		return initMock()
 	}
 
 	return initDB(c)
