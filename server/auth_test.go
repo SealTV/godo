@@ -10,6 +10,7 @@ import (
 	"testing"
 	"time"
 
+	"bitbucket.org/SealTV/go-site/data"
 	"bitbucket.org/SealTV/go-site/model"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
@@ -18,7 +19,7 @@ import (
 
 func TestServerRegister(t *testing.T) {
 	//Setup
-	db := GetDefaultDBInstance()
+	db := data.GetDefaultDBInstance()
 	e := echo.New()
 	type args struct {
 		e *echo.Echo
@@ -103,7 +104,7 @@ func TestServerLogin(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{
@@ -116,7 +117,7 @@ func TestServerLogin(t *testing.T) {
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: true,
 			user: model.User{
@@ -178,7 +179,7 @@ func TestServerMainJwt(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{

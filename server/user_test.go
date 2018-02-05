@@ -10,6 +10,7 @@ import (
 	"fmt"
 	"net/http"
 
+	"bitbucket.org/SealTV/go-site/data"
 	"bitbucket.org/SealTV/go-site/model"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
@@ -29,13 +30,13 @@ func TestServer_getUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -82,13 +83,13 @@ func TestServer_getUserModel(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -137,13 +138,13 @@ func TestServer_updateUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -186,13 +187,13 @@ func TestServer_deleteUser(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},

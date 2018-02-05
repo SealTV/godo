@@ -3,15 +3,17 @@ package server
 import (
 	"testing"
 
-	"bitbucket.org/SealTV/go-site/model"
 	"encoding/json"
 	"fmt"
-	"github.com/labstack/echo"
-	"github.com/stretchr/testify/assert"
 	"net/http"
 	"net/http/httptest"
 	"strings"
 	"time"
+
+	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/model"
+	"github.com/labstack/echo"
+	"github.com/stretchr/testify/assert"
 )
 
 func TestServer_getTodos(t *testing.T) {
@@ -28,13 +30,13 @@ func TestServer_getTodos(t *testing.T) {
 	}{
 		{
 			name:    "1",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
-			s:       &Server{db: GetDefaultDBInstance()},
+			s:       &Server{db: data.GetDefaultDBInstance()},
 			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
@@ -78,7 +80,7 @@ func TestServer_addTodo(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          2,
 				Title:       "todo2",
@@ -90,7 +92,7 @@ func TestServer_addTodo(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          1,
 				Title:       "todo1",
@@ -143,7 +145,7 @@ func TestServer_updateTodo(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          2,
 				Title:       "todo2",
@@ -155,7 +157,7 @@ func TestServer_updateTodo(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          1,
 				Title:       "todo1",
@@ -200,7 +202,7 @@ func TestServer_deleteTodo(t *testing.T) {
 	}{
 		{
 			name: "1",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          2,
 				Title:       "todo2",
@@ -212,7 +214,7 @@ func TestServer_deleteTodo(t *testing.T) {
 		},
 		{
 			name: "2",
-			s:    &Server{db: GetDefaultDBInstance()},
+			s:    &Server{db: data.GetDefaultDBInstance()},
 			args: args{e, model.Todo{
 				Id:          1,
 				Title:       "todo1",
