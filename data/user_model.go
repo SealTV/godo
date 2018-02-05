@@ -4,7 +4,7 @@ import (
 	"bitbucket.org/SealTV/go-site/model"
 )
 
-func (db *postgresConnector) GetUserModel(id int) (model.UserModel, error) {
+func (db *pgConnector) GetUserModel(id int) (model.UserModel, error) {
 	var userModel model.UserModel
 	var user model.User
 	user, err := db.GetUserById(id)

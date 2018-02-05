@@ -6,7 +6,7 @@ import (
 	"bitbucket.org/SealTV/go-site/model"
 )
 
-func (db *postgresConnector) GetAllUsers() (model.UsersCollection, error) {
+func (db *pgConnector) GetAllUsers() (model.UsersCollection, error) {
 	rows, err := db.Query("SELECT * FROM users")
 	if err != nil {
 		return nil, err
@@ -15,7 +15,7 @@ func (db *postgresConnector) GetAllUsers() (model.UsersCollection, error) {
 	return parseUserRows(rows)
 }
 
-func (db *postgresConnector) GetUserById(id int) (model.User, error) {
+func (db *pgConnector) GetUserById(id int) (model.User, error) {
 	var user model.User
 	err := db.QueryRow(`SELECT * FROM users WHERE id = $1 LIMIT 1`, id).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
@@ -26,7 +26,7 @@ func (db *postgresConnector) GetUserById(id int) (model.User, error) {
 	return user, nil
 }
 
-func (db *postgresConnector) GetUserByLoginAndPassword(login, password string) (model.User, error) {
+func (db *pgConnector) GetUserByLoginAndPassword(login, password string) (model.User, error) {
 	var user model.User
 	err := db.QueryRow(`SELECT * FROM users WHERE (login = $1 OR email = $1) AND password = $2 LIMIT 1`, login, password).
 		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
@@ -37,7 +37,7 @@ func (db *postgresConnector) GetUserByLoginAndPassword(login, password string) (
 	return user, nil
 }
 
-func (db *postgresConnector) AddUser(user model.User) (model.User, error) {
+func (db *pgConnector) AddUser(user model.User) (model.User, error) {
 	err := db.QueryRow(`INSERT INTO users(login, password, email) VALUES ($1, $2, $3) RETURNING id, register_date;`,
 		user.Login, user.Password, user.Email).Scan(&user.Id, &user.RegisterDate)
 
@@ -47,7 +47,7 @@ func (db *postgresConnector) AddUser(user model.User) (model.User, error) {
 	return user, nil
 }
 
-func (db *postgresConnector) UpdateUser(user model.User) (int64, error) {
+func (db *pgConnector) UpdateUser(user model.User) (int64, error) {
 	r, err := db.Exec(`UPDATE users SET login = $2, password = $3, email = $4 WHERE id = $1`,
 		user.Id, user.Login, user.Password, user.Email)
 	if err != nil {
@@ -56,11 +56,11 @@ func (db *postgresConnector) UpdateUser(user model.User) (int64, error) {
 	return r.RowsAffected()
 }
 
-func (db *postgresConnector) DeleteUser(user model.User) (int64, error) {
+func (db *pgConnector) DeleteUser(user model.User) (int64, error) {
 	return db.DeleteUserById(user.Id)
 }
 
-func (db *postgresConnector) DeleteUserById(user int) (int64, error) {
+func (db *pgConnector) DeleteUserById(user int) (int64, error) {
 	tx, err := db.Begin()
 	r, err := tx.Exec(`DELETE FROM todos WHERE user_id = $1`, user)
 	if err != nil {

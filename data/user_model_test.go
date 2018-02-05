@@ -22,7 +22,7 @@ func TestGetUserModel(t *testing.T) {
 	}
 	tests := []struct {
 		name     string
-		db       *postgresConnector
+		db       *pgConnector
 		mock     sqlmock.Sqlmock
 		args     args
 		want     model.UserModel
@@ -31,7 +31,7 @@ func TestGetUserModel(t *testing.T) {
 	}{
 		{
 			name: "1",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{
@@ -90,7 +90,7 @@ func TestGetUserModel(t *testing.T) {
 		},
 		{
 			name: "2",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{
@@ -149,7 +149,7 @@ func TestGetUserModel(t *testing.T) {
 		},
 		{
 			name: "3",
-			db:   &postgresConnector{db},
+			db:   &pgConnector{db},
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{

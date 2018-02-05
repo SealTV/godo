@@ -6,15 +6,20 @@ import (
 	"log"
 
 	"bitbucket.org/SealTV/go-site/model"
+	// init postgres sql lib
 	_ "github.com/lib/pq"
 )
 
-const (
-	dbUser          = "postgres"
-	dbName          = "todo_db"
-	dbSslMode       = "disable"
-	dbDefaultSchema = "public"
-)
+type Config struct {
+	UserDebugDB bool   `json:"use_debug_db"`
+	Host        string `json:"host"`
+	Port        int    `json:"port"`
+	User        string `json:"user"`
+	Password    string `json:"password"`
+	DBName      string `json:"db_name"`
+	Scheme      string `json:"scheme"`
+	SSLMode     string `json:"ssl_mode"`
+}
 
 //UserTable provide methods for table queries
 type UserTable interface {
@@ -61,34 +66,43 @@ type DBConnector interface {
 	TodoTable
 }
 
-type postgresConnector struct {
+type pgConnector struct {
 	*sql.DB
 }
 
-//InitDB create connector for db
-func InitDB() DBConnector {
-	db, err := sql.Open("postgres", getConnectionSating())
+func New(c Config) DBConnector {
+	if c.UserDebugDB {
+		return nil
+	}
+
+	return initDB(c)
+}
+
+func initDB(c Config) DBConnector {
+	db, err := sql.Open("postgres", c.getConnectionString())
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	// если ошибок нет, но не можем подключиться к базе данных,
-	// то так же выходим
-	if db == nil {
-		panic("db nil")
+	if err := db.Ping(); err != nil {
+		log.Fatal(err)
 	}
 
-	_, err = db.Exec(fmt.Sprintf("SET search_path TO %s;", dbDefaultSchema))
-	if err != nil {
+	if _, err = db.Exec(fmt.Sprintf("SET search_path TO %s;", c.Scheme)); err != nil {
 		log.Fatal(err)
 	}
 
 	var connector DBConnector
-	connector = &postgresConnector{db}
+	connector = &pgConnector{db}
 	return connector
 }
 
-func getConnectionSating() string {
-	dbInfo := fmt.Sprintf("user=%s dbname=%s sslmode=%s", dbUser, dbName, dbSslMode)
-	return dbInfo
+func (c *Config) getConnectionString() string {
+	return fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=%s",
+		c.Host,
+		c.Port,
+		c.User,
+		c.Password,
+		c.DBName,
+		c.SSLMode)
 }
