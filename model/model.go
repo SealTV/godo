@@ -6,13 +6,13 @@ import (
 
 type (
 	UserModel struct {
-		User
-		TodoLists []TodoListModel
+		User      `json:"user"`
+		TodoLists []TodoListModel `json:"todoLists"`
 	}
 
 	TodoListModel struct {
-		List
-		Todos TodoCollection
+		List  `json:"list"`
+		Todos TodoCollection `json:"todos"`
 	}
 
 	User struct {

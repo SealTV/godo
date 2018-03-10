@@ -2,7 +2,7 @@
     "server" : {
         "secret" : "my_secret",
         "host": "localhost",
-        "port": 8080
+        "port": 8081
     },
     "db": {
         "use_debug_db": false,

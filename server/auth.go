@@ -53,6 +53,7 @@ func (s *Server) login(c echo.Context) error {
 
 	user, err := s.db.GetUserByLoginAndPassword(username, password)
 	if err != nil {
+		log.Println(err)
 		return c.JSON(http.StatusNotFound, err)
 	}
 
