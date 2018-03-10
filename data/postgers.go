@@ -72,13 +72,15 @@ type pgConnector struct {
 
 func New(c Config) DBConnector {
 	if c.UserDebugDB {
+		log.Println("Use db mock")
 		return initMock()
 	}
-
+	log.Println("Use databese", c.DBName, c.Host, c.Port)
 	return initDB(c)
 }
 
 func initDB(c Config) DBConnector {
+	log.Println("DB connection string:", c.getConnectionString())
 	db, err := sql.Open("postgres", c.getConnectionString())
 	if err != nil {
 		log.Fatal(err)

@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"flag"
+	"log"
 	"os"
 
 	"bitbucket.org/SealTV/go-site/data"
@@ -18,6 +19,7 @@ type config struct {
 
 func main() {
 	flag.Parse()
+	log.Println("Start")
 
 	f, err := os.Open(*configFile)
 	if err != nil {
