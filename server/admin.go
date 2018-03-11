@@ -7,5 +7,5 @@ import (
 )
 
 func mainAdmin(c echo.Context) error {
-	return c.String(http.StatusOK, "hoary you are on the secret admin main page!")
+	return sendResponse(c, http.StatusOK, "hoary you are on the secret admin main page!", nil)
 }

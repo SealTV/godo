@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"log"
 
 	"bitbucket.org/SealTV/go-site/data"
 	"github.com/labstack/echo"
@@ -22,6 +23,11 @@ type Config struct {
 	Port      int    `json:"port"`
 }
 
+type response struct {
+	Result interface{} `json:"result"`
+	Error  error       `json:"error"`
+}
+
 // New - create new instance of servers
 func New(db data.DBConnector, c Config) *Server {
 	e := echo.New()
@@ -30,9 +36,31 @@ func New(db data.DBConnector, c Config) *Server {
 
 	// this logs the server interaction
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
-		Format: `[${time_rfc3339}]  ${status}  ${method} ${host}${path} ${latency_human}` + "\n",
+		Skipper: middleware.DefaultSkipper,
+		Format: "[${time_unix}] ${id} " +
+			"${status}  ${method} " +
+			"${host}${path} ${latency_human} " +
+			"${bytes_in}:${bytes_out} " +
+			"${form} " +
+			"\n",
 	}))
 	e.Use(middleware.Recover())
+	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+		log.Printf("REQUEST: %s\n", string(reqBody))
+		log.Printf("RESPONSE: %s\n", string(resBody))
+	}))
+
+	// CORS default
+	// Allows requests from any origin wth GET, HEAD, PUT, POST or DELETE method.
+	// e.Use(middleware.CORS())
+
+	// CORS restricted
+	// Allows requests from any `https://labstack.com` or `https://labstack.net` origin
+	// wth GET, PUT, POST or DELETE method.
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"http://localhost:8080", "http://localhost:3000", "https://localhost:8080"},
+		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	}))
 
 	jwtGroup := e.Group("/api/jwt")
 	jwtGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
@@ -70,12 +98,14 @@ func New(db data.DBConnector, c Config) *Server {
 	// e.File("/", "static/index.html")
 	// e.File("/index", "static/index.html")
 
-	e.Logger.Fatal(e.Start(fmt.Sprintf("%s:%d", c.Host, c.Port)))
-
 	return &s
 }
 
 // Run - start server host
 func (s *Server) Run() {
 	s.e.Logger.Fatal(s.e.Start(fmt.Sprintf("%s:%d", s.c.Host, s.c.Port)))
+}
+
+func sendResponse(c echo.Context, status int, result interface{}, err error) error {
+	return c.JSON(status, response{result, err})
 }

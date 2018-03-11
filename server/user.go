@@ -10,53 +10,53 @@ import (
 func (s *Server) getUser(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+		return sendResponse(c, http.StatusFailedDependency, nil, err)
 	}
 
 	user, err := s.db.GetUserById(u.Id)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "User not found")
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return sendResponse(c, http.StatusOK, user, nil)
 }
 
 func (s *Server) getUserModel(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
-		c.String(http.StatusFailedDependency, "Invalid value")
+		return sendResponse(c, http.StatusFailedDependency, nil, err)
 	}
 
 	user, err := s.db.GetUserModel(u.Id)
 	if err != nil {
-		return c.String(http.StatusBadRequest, "User not found")
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
-	return c.JSON(http.StatusOK, user)
+	return sendResponse(c, http.StatusOK, user, nil)
 }
 
 func (s *Server) updateUser(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
-		c.String(http.StatusBadRequest, "Invalid value")
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
 	result, err := s.db.UpdateUser(*u)
 	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
-	return c.JSON(http.StatusOK, result)
+	return sendResponse(c, http.StatusOK, result, err)
 }
 
 func (s *Server) deleteUser(c echo.Context) error {
 	u := new(model.User)
 	if err := c.Bind(u); err != nil {
-		c.String(http.StatusBadRequest, "Invalid value")
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
 	result, err := s.db.DeleteUser(*u)
 	if err != nil {
-		return c.String(http.StatusBadRequest, err.Error())
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
-	return c.JSON(http.StatusOK, result)
+	return sendResponse(c, http.StatusOK, result, nil)
 }

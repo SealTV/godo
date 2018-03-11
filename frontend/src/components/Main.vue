@@ -12,6 +12,7 @@
               :todos="currentTodos"
               :listId="selectedListId"
             />
+            <Login></Login>
           </div>
         </div>
     </div>
@@ -20,6 +21,7 @@
 <script>
 import Lists from './Lists'
 import Todos from './Todos'
+import Login from './Login'
 
 export default {
   name: 'Main',
@@ -89,7 +91,7 @@ export default {
       }
     }
   },
-  components: { Lists, Todos },
+  components: { Lists, Todos, Login },
   methods: {
     addList (value) {
       var list = {

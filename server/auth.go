@@ -1,6 +1,7 @@
 package server
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -34,17 +35,24 @@ type (
 )
 
 func (s *Server) register(c echo.Context) error {
-	u := model.User{
-		Login:    c.FormValue("name"),
-		Email:    c.FormValue("email"),
-		Password: c.FormValue("password"),
+	u := model.User{}
+
+	decoder := json.NewDecoder(c.Request().Body)
+	if err := decoder.Decode(&u); err != nil {
+		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
+	defer c.Request().Body.Close()
+
+	// if err := c.Bind(&u); err != nil {
+	// 	log.Println(err)
+	// 	return sendResponse(c, http.StatusBadRequest, nil, err)
+	// }
+
 	u, err := s.db.AddUser(u)
 	if err != nil {
-		return c.JSON(http.StatusInternalServerError, err)
+		return sendResponse(c, http.StatusInternalServerError, nil, err)
 	}
-
-	return c.JSON(http.StatusCreated, u)
+	return sendResponse(c, http.StatusCreated, u, nil)
 }
 
 func (s *Server) login(c echo.Context) error {
@@ -54,17 +62,16 @@ func (s *Server) login(c echo.Context) error {
 	user, err := s.db.GetUserByLoginAndPassword(username, password)
 	if err != nil {
 		log.Println(err)
-		return c.JSON(http.StatusNotFound, err)
+		return sendResponse(c, http.StatusNotFound, nil, err)
 	}
 
 	// create jwt token
 	token, err := createJwtToken(user)
 	if err != nil {
-		log.Println("Error Creating JWT token", err)
-		return c.JSON(http.StatusInternalServerError, "something went wrong")
+		return sendResponse(c, http.StatusInternalServerError, nil, err)
 	}
 
-	return c.JSON(http.StatusOK, auth{token, user})
+	return sendResponse(c, http.StatusOK, auth{token, user}, nil)
 }
 
 func (s *Server) mainJwt(c echo.Context) error {
@@ -72,7 +79,7 @@ func (s *Server) mainJwt(c echo.Context) error {
 	claims := user.Claims.(*jwtClaims)
 	name := claims.Name
 	str := fmt.Sprintf("Hello %s, you is admin=%v", name, claims.Admin)
-	return c.String(http.StatusOK, str)
+	return sendResponse(c, http.StatusOK, str, nil)
 }
 
 func createJwtToken(user model.User) (string, error) {
