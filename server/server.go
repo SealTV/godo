@@ -26,7 +26,7 @@ type Config struct {
 func New(db data.DBConnector, c Config) *Server {
 	e := echo.New()
 	s := Server{db, e, c}
-	adminGroup := e.Group("/admin")
+	adminGroup := e.Group("/api/admin")
 
 	// this logs the server interaction
 	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
@@ -34,34 +34,34 @@ func New(db data.DBConnector, c Config) *Server {
 	}))
 	e.Use(middleware.Recover())
 
-	jwtGroup := e.Group("/jwt")
+	jwtGroup := e.Group("/api/jwt")
 	jwtGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
 		SigningMethod: "HS512",
 		SigningKey:    []byte(c.SecretKey),
 	}))
 
-	jwtGroup.GET("/main", s.mainJwt)
+	jwtGroup.GET("/api/main", s.mainJwt)
 
 	// user
-	jwtGroup.GET("/user", s.getUser)
-	jwtGroup.PUT("/user", s.updateUser)
-	jwtGroup.DELETE("/user/:id", s.deleteUser)
+	jwtGroup.GET("/api/user", s.getUser)
+	jwtGroup.PUT("/api/user", s.updateUser)
+	jwtGroup.DELETE("/api/user/:id", s.deleteUser)
 
 	// list
-	jwtGroup.GET("/list", s.getLists)
-	jwtGroup.POST("/list", s.addList)
-	jwtGroup.DELETE("/list/:id", s.deleteList)
+	jwtGroup.GET("/api/list", s.getLists)
+	jwtGroup.POST("/api/list", s.addList)
+	jwtGroup.DELETE("/api/list/:id", s.deleteList)
 
 	// todos
-	jwtGroup.GET("/tasks", s.getTodos)
-	jwtGroup.POST("/tasks", s.addTodo)
-	jwtGroup.PUT("/tasks", s.updateTodo)
-	jwtGroup.DELETE("/tasks/:id", s.deleteTodo)
+	jwtGroup.GET("/api/tasks", s.getTodos)
+	jwtGroup.POST("/api/tasks", s.addTodo)
+	jwtGroup.PUT("/api/tasks", s.updateTodo)
+	jwtGroup.DELETE("/api/tasks/:id", s.deleteTodo)
 
-	adminGroup.GET("/main", mainAdmin)
+	adminGroup.GET("/api/main", mainAdmin)
 
-	e.POST("/register", s.register)
-	e.GET("/login", s.login)
+	e.POST("/api/register", s.register)
+	e.GET("/api/login", s.login)
 
 	// e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 	// 	Root:   "static",
