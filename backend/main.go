@@ -6,15 +6,15 @@ import (
 	"log"
 	"os"
 
-	"bitbucket.org/SealTV/go-site/data"
-	"bitbucket.org/SealTV/go-site/server"
+	"bitbucket.org/SealTV/go-site/backend/data"
+	"bitbucket.org/SealTV/go-site/backend/service"
 )
 
 var configFile = flag.String("config", "config.json", "Config file name")
 
 type config struct {
-	Server server.Config `json:"server"`
-	DB     data.Config   `jsong:"postgres"`
+	Service service.Config `json:"server"`
+	DB      data.Config    `jsong:"postgres"`
 }
 
 func main() {
@@ -35,6 +35,6 @@ func main() {
 	}
 
 	db := data.New(conf.DB)
-	s := server.New(db, conf.Server)
+	s := service.New(db, conf.Service)
 	s.Run()
 }

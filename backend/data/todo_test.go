@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/model"
 	_ "github.com/lib/pq"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 )

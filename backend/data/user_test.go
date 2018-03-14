@@ -6,7 +6,7 @@ import (
 	"testing"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/model"
 	sqlmock "gopkg.in/DATA-DOG/go-sqlmock.v1"
 )
 

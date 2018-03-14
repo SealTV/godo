@@ -3,7 +3,7 @@ package data
 import (
 	"database/sql"
 
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/model"
 )
 
 // GetAllLists return list of all List in table

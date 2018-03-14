@@ -2,9 +2,8 @@ package server
 
 import (
 	"fmt"
-	"log"
 
-	"bitbucket.org/SealTV/go-site/data"
+	"bitbucket.org/SealTV/go-site/backend/data"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )
@@ -45,22 +44,22 @@ func New(db data.DBConnector, c Config) *Server {
 			"\n",
 	}))
 	e.Use(middleware.Recover())
-	e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
-		log.Printf("REQUEST: %s\n", string(reqBody))
-		log.Printf("RESPONSE: %s\n", string(resBody))
-	}))
+	// e.Use(middleware.BodyDump(func(c echo.Context, reqBody, resBody []byte) {
+	// 	log.Printf("REQUEST: %s\n", string(reqBody))
+	// 	log.Printf("RESPONSE: %s\n", string(resBody))
+	// }))
 
 	// CORS default
 	// Allows requests from any origin wth GET, HEAD, PUT, POST or DELETE method.
-	// e.Use(middleware.CORS())
+	e.Use(middleware.CORS())
 
 	// CORS restricted
 	// Allows requests from any `https://labstack.com` or `https://labstack.net` origin
 	// wth GET, PUT, POST or DELETE method.
-	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
-		AllowOrigins: []string{"http://localhost:8080", "http://localhost:3000", "https://localhost:8080"},
-		AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
-	}))
+	// e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+	// 	AllowOrigins: []string{"http://localhost:8080", "http://localhost:3000", "https://localhost:8080"},
+	// 	AllowMethods: []string{echo.GET, echo.PUT, echo.POST, echo.DELETE},
+	// }))
 
 	jwtGroup := e.Group("/api/jwt")
 	jwtGroup.Use(middleware.JWTWithConfig(middleware.JWTConfig{
@@ -88,8 +87,12 @@ func New(db data.DBConnector, c Config) *Server {
 
 	adminGroup.GET("/api/main", mainAdmin)
 
-	e.POST("/api/register", s.register)
-	e.GET("/api/login", s.login)
+	e.POST("/auth/register", s.register)
+	e.POST("/auth/login", s.login)
+	e.GET("/auth/user", s.user)
+	e.POST("/auth/logout", s.logout)
+
+	e.GET("/api/ping", s.ping)
 
 	// e.Use(middleware.StaticWithConfig(middleware.StaticConfig{
 	// 	Root:   "static",

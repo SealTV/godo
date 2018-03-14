@@ -10,8 +10,8 @@ import (
 	"testing"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/data"
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/data"
+	"bitbucket.org/SealTV/go-site/backend/model"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 	"github.com/stretchr/testify/assert"

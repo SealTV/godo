@@ -7,7 +7,7 @@ import (
 	"net/http"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/model"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/labstack/echo"
 	"gopkg.in/go-playground/validator.v8"
@@ -36,17 +36,11 @@ type (
 
 func (s *Server) register(c echo.Context) error {
 	u := model.User{}
-
 	decoder := json.NewDecoder(c.Request().Body)
 	if err := decoder.Decode(&u); err != nil {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 	defer c.Request().Body.Close()
-
-	// if err := c.Bind(&u); err != nil {
-	// 	log.Println(err)
-	// 	return sendResponse(c, http.StatusBadRequest, nil, err)
-	// }
 
 	u, err := s.db.AddUser(u)
 	if err != nil {
@@ -56,10 +50,15 @@ func (s *Server) register(c echo.Context) error {
 }
 
 func (s *Server) login(c echo.Context) error {
-	username := c.QueryParam("username")
-	password := c.QueryParam("password")
+	u := model.User{}
+	decoder := json.NewDecoder(c.Request().Body)
+	if err := decoder.Decode(&u); err != nil {
+		return sendResponse(c, http.StatusBadRequest, nil, err)
+	}
+	defer c.Request().Body.Close()
+	log.Println("user ", u)
 
-	user, err := s.db.GetUserByLoginAndPassword(username, password)
+	user, err := s.db.GetUserByLoginAndPassword(u.Email, u.Password)
 	if err != nil {
 		log.Println(err)
 		return sendResponse(c, http.StatusNotFound, nil, err)
@@ -72,6 +71,35 @@ func (s *Server) login(c echo.Context) error {
 	}
 
 	return sendResponse(c, http.StatusOK, auth{token, user}, nil)
+}
+
+func (s *Server) logout(c echo.Context) error {
+	return sendResponse(c, http.StatusOK, "ok", nil)
+}
+
+func (s *Server) user(c echo.Context) error {
+	email := c.QueryParam("email")
+	password := c.QueryParam("password")
+
+	user, err := s.db.GetUserByLoginAndPassword(email, password)
+	if err != nil {
+		log.Println(err)
+		return sendResponse(c, http.StatusNotFound, nil, err)
+	}
+
+	// create jwt token
+	token, err := createJwtToken(user)
+	if err != nil {
+		return sendResponse(c, http.StatusInternalServerError, nil, err)
+	}
+
+	return sendResponse(c, http.StatusOK, auth{token, user}, nil)
+}
+
+func (s *Server) ping(c echo.Context) error {
+	ping := c.Request().URL.Query().Get("ping")
+	log.Println("ping=", ping)
+	return sendResponse(c, http.StatusOK, struct{ Pong string }{ping}, nil)
 }
 
 func (s *Server) mainJwt(c echo.Context) error {

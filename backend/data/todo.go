@@ -3,7 +3,7 @@ package data
 import (
 	"database/sql"
 
-	"bitbucket.org/SealTV/go-site/model"
+	"bitbucket.org/SealTV/go-site/backend/model"
 )
 
 func (db *pgConnector) GetAllTodos() (model.TodoCollection, error) {
