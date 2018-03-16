@@ -24,4 +24,3 @@ pipelines:
 
           - go build -v backend/*.go
           - go test -v bitbucket.org/SealTV/go-site/backend/data
-          - go test -bench=.  bitbucket.org/SealTV/go-site/tools
