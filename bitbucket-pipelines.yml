@@ -17,9 +17,10 @@ pipelines:
           - go get -v github.com/DATA-DOG/go-sqlmock
           - go get -v gopkg.in/DATA-DOG/go-sqlmock.v1
           - go get -v github.com/stretchr/testify/assert
-          - go build -v
-          - go test -v
-          - go test -v bitbucket.org/SealTV/go-site/tools
+          - go get -v github.com/appleboy/gin-jwt
+          - go get -v github.com/gin-contrib/cors
+          - go get -v github.com/gin-gonic/gin
+
+          - go build -v backend/*.go
           - go test -v bitbucket.org/SealTV/go-site/backend/data
-          - go test -v bitbucket.org/SealTV/go-site/server
           - go test -bench=.  bitbucket.org/SealTV/go-site/tools
