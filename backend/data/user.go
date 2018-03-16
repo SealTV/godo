@@ -26,6 +26,17 @@ func (db *pgConnector) GetUserById(id int) (model.User, error) {
 	return user, nil
 }
 
+func (db *pgConnector) GetUserByLogin(login string) (model.User, error) {
+	var user model.User
+	err := db.QueryRow(`SELECT * FROM users WHERE (login = $1 OR email = $1) LIMIT 1`, login).
+		Scan(&user.Id, &user.Login, &user.Password, &user.Email, &user.RegisterDate)
+
+	if err != nil {
+		return user, err
+	}
+	return user, nil
+}
+
 func (db *pgConnector) GetUserByLoginAndPassword(login, password string) (model.User, error) {
 	var user model.User
 	err := db.QueryRow(`SELECT * FROM users WHERE (login = $1 OR email = $1) AND password = $2 LIMIT 1`, login, password).

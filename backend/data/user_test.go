@@ -207,6 +207,78 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 	}
 }
 
+func TestGetUserByLogin(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+
+	type args struct {
+		login string
+	}
+	tests := []struct {
+		name    string
+		db      *pgConnector
+		mock    sqlmock.Sqlmock
+		args    args
+		want    model.User
+		wantErr bool
+	}{
+		{
+			name:    "1",
+			db:      &pgConnector{db},
+			mock:    mock,
+			args:    args{login: "SomeLogin1"},
+			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			wantErr: false,
+		},
+		{
+			name:    "2",
+			db:      &pgConnector{db},
+			mock:    mock,
+			args:    args{login: "some1@email.com"},
+			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			wantErr: false,
+		},
+		{
+			name:    "3",
+			db:      &pgConnector{db},
+			mock:    mock,
+			args:    args{login: "SomeLogin1"},
+			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			wantErr: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			expectQuery := tt.mock.ExpectQuery("SELECT (.+) FROM users WHERE ((.+)) LIMIT 1").
+				WithArgs(tt.args.login)
+
+			if tt.wantErr {
+				expectQuery.WillReturnError(fmt.Errorf("Some error"))
+			} else {
+				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"}).
+					AddRow(tt.want.Id, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
+				expectQuery.WillReturnRows(rs)
+			}
+
+			got, err := tt.db.GetUserByLogin(tt.args.login)
+
+			if err := mock.ExpectationsWereMet(); err != nil {
+				t.Errorf("there were unfulfilled expections: %s", err)
+			}
+			if (err != nil) != tt.wantErr {
+				t.Errorf("postgresConnector.GetUserByLoginAndPassword() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !tt.wantErr && !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("postgresConnector.GetUserByLoginAndPassword() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func TestAddUser(t *testing.T) {
 	db, mock, err := sqlmock.New()
 	if err != nil {

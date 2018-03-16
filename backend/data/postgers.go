@@ -25,6 +25,7 @@ type Config struct {
 type UserTable interface {
 	GetAllUsers() (model.UsersCollection, error)
 	GetUserById(id int) (model.User, error)
+	GetUserByLogin(login string) (model.User, error)
 	GetUserByLoginAndPassword(login, password string) (model.User, error)
 	AddUser(user model.User) (model.User, error)
 	UpdateUser(user model.User) (int64, error)

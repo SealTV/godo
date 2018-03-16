@@ -90,6 +90,16 @@ func (db *dbMock) GetUserById(id int) (model.User, error) {
 	return model.User{}, fmt.Errorf("User not found")
 }
 
+func (db *dbMock) GetUserByLogin(login string) (model.User, error) {
+	for _, user := range db.users {
+		if user.Login == login || user.Email == user.Email {
+			return user, nil
+		}
+	}
+
+	return model.User{}, fmt.Errorf("User not found")
+}
+
 func (db *dbMock) GetUserByLoginAndPassword(login, password string) (model.User, error) {
 	for _, user := range db.users {
 		if (user.Email == login || user.Login == login) && user.Password == password {

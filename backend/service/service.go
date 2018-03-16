@@ -11,18 +11,18 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-//Service - server object
-type Service struct {
-	db     data.DBConnector
-	router *gin.Engine
-	config Config
-}
-
 // Config - server config params
 type Config struct {
 	SecretKey string `json:"secret"`
 	Host      string `json:"host"`
 	Port      int    `json:"port"`
+}
+
+//Service - server object
+type Service struct {
+	db     data.DBConnector
+	router *gin.Engine
+	config Config
 }
 
 type response struct {
@@ -33,8 +33,16 @@ type response struct {
 // New - create new instance of servers
 func New(db data.DBConnector, c Config) *Service {
 	router := gin.Default()
+	router.Use(gin.Logger())
+	router.Use(gin.Recovery())
+
 	s := Service{db, router, c}
 
+	initRouters(&s, router)
+	return &s
+}
+
+func initRouters(s *Service, router *gin.Engine) {
 	config := cors.DefaultConfig()
 	config.AddAllowHeaders(
 		"ExposedHeader",
@@ -53,28 +61,28 @@ func New(db data.DBConnector, c Config) *Service {
 	// the jwt middleware
 	authMiddleware := &jwt.GinJWTMiddleware{
 		Realm:         "test zone",
-		Key:           []byte(c.SecretKey),
+		Key:           []byte(s.config.SecretKey),
 		Timeout:       time.Hour * 24,
 		MaxRefresh:    time.Hour * 24,
 		Authenticator: s.authenticator,
 		Authorizator:  s.authorizator,
 		Unauthorized:  s.unauthorized,
+		PayloadFunc:   s.payloadFunc,
 		TimeFunc:      time.Now,
 	}
 
-	router.POST("/login", authMiddleware.LoginHandler)
-	router.GET("/user", s.helloHandler)
-	router.GET("/refresh", authMiddleware.RefreshHandler)
+	router.POST("/auth/register", s.register)
+	router.POST("/auth/login", authMiddleware.LoginHandler)
 
 	auth := router.Group("/auth")
 	auth.Use(authMiddleware.MiddlewareFunc())
 	{
-		auth.GET("/hello", s.helloHandler)
+		auth.GET("/user", s.verify)
+		auth.GET("/refresh", authMiddleware.RefreshHandler)
 		auth.GET("/refresh_token", authMiddleware.RefreshHandler)
 		auth.POST("/logout", s.logout)
+		auth.POST("/delete", s.delete)
 	}
-
-	return &s
 }
 
 // Run - run web service
