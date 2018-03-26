@@ -7,6 +7,7 @@ import VueCookie from 'vue-cookie'
 import axios from 'axios'
 import VueAxios from 'vue-axios'
 import VueAuth from '@websanova/vue-auth'
+import Bootstrap from 'bootstrap-vue'
 
 import App from './App'
 import router from './router'
@@ -22,6 +23,7 @@ Vue.use(VueI18n)
 Vue.use(vueConfig, configs)
 Vue.use(VueCookie)
 Vue.use(VueAxios, axios)
+Vue.use(Bootstrap)
 
 Vue.config.productionTip = false
 Vue.axios.defaults.baseURL = configs.API

@@ -1,40 +1,34 @@
 <template>
-    <div class="List col-md-3">
-        <div>
-            <div v-if="this.$auth.ready()">
-                <div class="form-group">
-                    <label for="name">User name</label>
-                    <input v-model="data.username" type="text" class="form-control" id="name" placeholder="Login">
-                    </div>
-                    <div class="form-group">
-                        <label for="email">Email address</label>
-                        <input v-model="data.email" type="email" class="form-control" id="email" placeholder="Enter email">
-                    </div>
-                    <div class="form-group">
-                        <label for="password">Password</label>
-                        <input v-model="data.password" type="password" class="form-control" id="password" placeholder="Password">
-                    </div>
-                    <button type="submit" class="btn btn-primary" v-if="!$auth.check()" @click="register">Register</button>
-                    <div>
-                        {{ this.$auth.user().email }}
-                    </div>
-                    <button type="submit" class="btn btn-primary" v-if="!$auth.check()" @click="login">Login</button>
-                    <button type="submit" class="btn btn-primary" v-if="$auth.check()" @click="ping">Ping</button>
-                    <button type="submit" class="btn btn-primary" v-if="$auth.check()" @click="logout">Logout</button>
-                    </div>
-                    <div>
-                        {{ this.$auth.user().email }}
-                    </div>
-            </div>
-            <div v-if="!this.$auth.ready()">
-                Loading ...
-            </div>
+    <div>
+      <b-navbar-nav class="ml-auto">
+        <b-navbar right v-if="!$auth.check()">
+          <b-nav-form>
+            <b-form-input v-model="data.username" class="mr-sm-2" type="text" id="name" placeholder="Login"></b-form-input>
+            <b-form-input v-model="data.password" class="mr-sm-2" type="password" id="name" placeholder="Password"></b-form-input>
+            <b-button variant="outline-success" class="my-2 my-sm-0" type="submit" @click="login">Login</b-button>
+          </b-nav-form>
+        </b-navbar>
+
+        <b-nav-item-dropdown right v-if="$auth.check()">
+            <template slot="button-content">
+              <em>User</em>
+            </template>
+            <b-dropdown-item href="#">Profile</b-dropdown-item>
+            <b-dropdown-item href="#"  @click="logout">Signout</b-dropdown-item>
+        </b-nav-item-dropdown>
+      </b-navbar-nav>
+      <div>
+        <b-modal ref="myModalRef" hide-footer title="Login failed">
+          <div class="d-block text-center">
+            <p>Invalid username or password!</p>
+          </div>
+          <b-btn class="mt-3" variant="outline-danger" block @click="hideModal">Ok</b-btn>
+        </b-modal>
+      </div>
     </div>
 </template>
 
 <script>
-// import axios from 'axios'
-// import {HTTP} from '../assets/js/http-common'
 
 export default {
   name: 'Login',
@@ -44,34 +38,35 @@ export default {
         username: '',
         email: '',
         password: ''
-      }
+      },
+      error: {}
     }
   },
   methods: {
+    showModal () {
+      this.$refs.myModalRef.show()
+    },
+    hideModal () {
+      this.$refs.myModalRef.hide()
+    },
     register: function (event) {
-    //   console.log(JSON.stringify(this.data))
-      //   var querystring = require('querystring')
-      // axios.post('http://something.com/', querystring.stringify({ foo: 'bar' }));
-    //   this.$cookie.set('test', 'hello world', 1)
       this.$auth.register({
         data: this.data,
         success: function () {},
         error: function () {},
         autoLogin: true,
         rememberMe: true
-        // redirect: {name: 'account'},
-        // etc...
       })
     },
     login: function () {
       this.$auth.login({
         data: this.data,
         success: function (response) {
-          console.log('success ' + JSON.stringify(response))
+          this.data.username = response.data.username
           this.$auth.user(response)
         },
         error: function () {
-          console.log('error ' + this.context)
+          this.showModal()
         },
         rememberMe: true,
         autoLogin: true,
@@ -79,13 +74,11 @@ export default {
       })
     },
     logout: function () {
-    //   this.$cookie.delete('test')
       this.$auth.logout({
         makeRequest: true,
-        params: {}, // data: {} in axios
+        params: {},
         success: function () {},
         error: function () {}
-        // redirect: '/login',
       })
     },
     ping: function () {

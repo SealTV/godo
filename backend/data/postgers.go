@@ -56,7 +56,7 @@ type TodoTable interface {
 	DeleteTodoById(id int) (int64, error)
 }
 
-//DBConnector provide methods for datase
+//DBConnector provide methods for database
 type DBConnector interface {
 	GetUserModel(id int) (model.UserModel, error)
 	//User section
@@ -76,7 +76,7 @@ func New(c Config) DBConnector {
 		log.Println("Use db mock")
 		return initMock()
 	}
-	log.Println("Use databese", c.DBName, c.Host, c.Port)
+	log.Println("Use database", c.DBName, c.Host, c.Port)
 	return initDB(c)
 }
 

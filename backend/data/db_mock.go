@@ -2,6 +2,7 @@ package data
 
 import (
 	"fmt"
+	"log"
 	"time"
 
 	"bitbucket.org/SealTV/go-site/backend/model"
@@ -92,7 +93,8 @@ func (db *dbMock) GetUserById(id int) (model.User, error) {
 
 func (db *dbMock) GetUserByLogin(login string) (model.User, error) {
 	for _, user := range db.users {
-		if user.Login == login || user.Email == user.Email {
+		log.Println("u: ", user)
+		if user.Login == login || user.Email == login {
 			return user, nil
 		}
 	}

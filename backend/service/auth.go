@@ -2,6 +2,7 @@ package service
 
 import (
 	"encoding/json"
+	"fmt"
 	"log"
 	"net/http"
 
@@ -9,6 +10,14 @@ import (
 
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
+)
+
+type (
+	registerData struct {
+		Username string `json:"username"`
+		Email    string `json:"email"`
+		Password string `json:"password"`
+	}
 )
 
 func (s *Service) authenticator(username string, password string, c *gin.Context) (string, bool) {
@@ -21,9 +30,11 @@ func (s *Service) authenticator(username string, password string, c *gin.Context
 }
 
 func (s *Service) payloadFunc(username string) map[string]interface{} {
-	log.Println("payload for user", username)
+	log.Println("username:", username)
 	u, err := s.db.GetUserByLogin(username)
+	log.Println("User", u)
 	if err != nil {
+		log.Println(err.Error())
 		return nil
 	}
 
@@ -48,26 +59,22 @@ func (s *Service) unauthorized(c *gin.Context, code int, message string) {
 func (s *Service) register(c *gin.Context) {
 	b, err := c.GetRawData()
 	if err != nil {
-		log.Println("raw data are not found", err)
 		c.Status(http.StatusBadRequest)
 	}
-
-	registerData := struct {
-		Username string `json:"username"`
-		Email    string `json:"email"`
-		Password string `json:"password"`
-	}{}
-	err = json.Unmarshal(b, &registerData)
-
+	fmt.Println(string(b))
+	rd := registerData{}
+	err = json.Unmarshal(b, &rd)
+	fmt.Println(rd)
 	if err != nil {
 		log.Println("Can't unmarshal user data")
 		c.Status(http.StatusBadRequest)
+		return
 	}
 
 	u := model.User{
-		Login:    registerData.Username,
-		Email:    registerData.Email,
-		Password: registerData.Password,
+		Login:    rd.Username,
+		Email:    rd.Email,
+		Password: rd.Password,
 	}
 	u, err = s.db.AddUser(u)
 	if err != nil {
@@ -81,9 +88,9 @@ func (s *Service) verify(c *gin.Context) {
 	claims := jwt.ExtractClaims(c)
 
 	c.JSON(200, gin.H{
-		"id":    claims["userId"],
-		"login": claims["login"],
-		"email": claims["email"],
+		"userId": claims["userId"],
+		"login":  claims["login"],
+		"email":  claims["email"],
 	})
 }
 
