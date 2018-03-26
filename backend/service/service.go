@@ -83,6 +83,20 @@ func initRouters(s *Service, router *gin.Engine) {
 		auth.POST("/logout", s.logout)
 		auth.POST("/delete", s.delete)
 	}
+
+	v1 := router.Group("v1")
+	v1.Use(authMiddleware.MiddlewareFunc())
+	{
+		v1.POST("todos/", s.addNewTodo)
+		v1.GET("todos/", s.getAllTodos)
+		v1.PUT("todos/", s.updateAllTodos)
+		v1.DELETE("todos/", s.deleteAllTodos)
+
+		v1.GET("todos/:id", s.getTodo)
+		v1.POST("todos/:id", s.addTodo)
+		v1.PUT("todos/:id", s.updateTodo)
+		v1.DELETE("todos/:id", s.deleteTodo)
+	}
 }
 
 // Run - run web service

@@ -31,13 +31,13 @@ func TestServer_getUser(t *testing.T) {
 		{
 			name:    "1",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
 	}
@@ -59,7 +59,7 @@ func TestServer_getUser(t *testing.T) {
 					if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
 						t.Error(fmt.Errorf("fail"))
 					}
-					assert.Equal(t, tt.args.user.Id, result.Id)
+					assert.Equal(t, tt.args.user.ID, result.ID)
 					assert.Equal(t, tt.args.user.Login, result.Login)
 					assert.Equal(t, tt.args.user.Email, result.Email)
 					assert.Equal(t, tt.args.user.Password, result.Password)
@@ -84,13 +84,13 @@ func TestServer_getUserModel(t *testing.T) {
 		{
 			name:    "1",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
 	}
@@ -112,7 +112,7 @@ func TestServer_getUserModel(t *testing.T) {
 					if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
 						t.Error(fmt.Errorf("fail"))
 					}
-					assert.Equal(t, tt.args.user.Id, result.Id)
+					assert.Equal(t, tt.args.user.ID, result.ID)
 					assert.Equal(t, tt.args.user.Login, result.Login)
 					assert.Equal(t, tt.args.user.Email, result.Email)
 					assert.Equal(t, tt.args.user.Password, result.Password)
@@ -139,13 +139,13 @@ func TestServer_updateUser(t *testing.T) {
 		{
 			name:    "1",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
 	}
@@ -188,13 +188,13 @@ func TestServer_deleteUser(t *testing.T) {
 		{
 			name:    "1",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: -2, Login: "SealTVV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
 	}

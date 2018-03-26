@@ -55,7 +55,7 @@ func (s *Server) deleteList(c echo.Context) error {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
-	deleted, err := s.db.DeleteListById(list.Id)
+	deleted, err := s.db.DeleteListById(list.ID)
 	if err != nil {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}

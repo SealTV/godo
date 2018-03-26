@@ -86,7 +86,7 @@ func TestGetAllTodos(t *testing.T) {
 				rs := sqlmock.NewRows([]string{"id", "title", "description", "list_id", "is_active", "user_id", "date_create"})
 
 				for _, todo := range tt.want {
-					rs = rs.AddRow(todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId, todo.DateCreate)
+					rs = rs.AddRow(todo.ID, todo.Title, todo.Description, todo.ListID, todo.IsActive, todo.UserID, todo.DateCreate)
 				}
 
 				if tt.wantErrInRows {
@@ -171,7 +171,7 @@ func TestGetAllTodosForUser(t *testing.T) {
 				DB: tt.fields.DB,
 			}
 
-			expectQuery := mock.ExpectQuery("SELECT (.+) FROM todos WHERE (.+)").WithArgs(tt.args.user.Id)
+			expectQuery := mock.ExpectQuery("SELECT (.+) FROM todos WHERE (.+)").WithArgs(tt.args.user.ID)
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("some error"))
 			} else {
@@ -180,7 +180,7 @@ func TestGetAllTodosForUser(t *testing.T) {
 					NewRows([]string{"id", "title", "description", "list_id", "is_active", "user_id", "date_create"})
 
 				for _, todo := range tt.want {
-					rs = rs.AddRow(todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId, todo.DateCreate)
+					rs = rs.AddRow(todo.ID, todo.Title, todo.Description, todo.ListID, todo.IsActive, todo.UserID, todo.DateCreate)
 				}
 				expectQuery.WillReturnRows(rs)
 			}
@@ -259,7 +259,7 @@ func TestGetAllTodosForUserList(t *testing.T) {
 			db := &pgConnector{
 				DB: tt.fields.DB,
 			}
-			expectQuery := mock.ExpectQuery("SELECT (.+) FROM todos WHERE (.+)").WithArgs(tt.args.user.Id, tt.args.list.Id)
+			expectQuery := mock.ExpectQuery("SELECT (.+) FROM todos WHERE (.+)").WithArgs(tt.args.user.ID, tt.args.list.ID)
 
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
@@ -267,7 +267,7 @@ func TestGetAllTodosForUserList(t *testing.T) {
 
 				rs := sqlmock.NewRows([]string{"id", "title", "description", "list_id", "is_active", "user_id", "date_create"})
 				for _, todo := range tt.want {
-					rs = rs.AddRow(todo.Id, todo.Title, todo.Description, todo.ListId, todo.IsActive, todo.UserId, todo.DateCreate)
+					rs = rs.AddRow(todo.ID, todo.Title, todo.Description, todo.ListID, todo.IsActive, todo.UserID, todo.DateCreate)
 				}
 
 				expectQuery.WillReturnRows(rs)
@@ -337,12 +337,12 @@ func TestAddTodo(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			excpectQuery := mock.ExpectQuery("INSERT INTO todos(.+) RETURNING id, date_create").
-				WithArgs(tt.args.Title, tt.args.Description, tt.args.ListId, tt.args.IsActive, tt.args.UserId)
+				WithArgs(tt.args.Title, tt.args.Description, tt.args.ListID, tt.args.IsActive, tt.args.UserID)
 
 			if tt.wantErr {
 				excpectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
-				rs := sqlmock.NewRows([]string{"id", "date_create"}).AddRow(tt.want.Id, tt.want.DateCreate)
+				rs := sqlmock.NewRows([]string{"id", "date_create"}).AddRow(tt.want.ID, tt.want.DateCreate)
 				excpectQuery.WillReturnRows(rs)
 			}
 

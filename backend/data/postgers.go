@@ -47,6 +47,7 @@ type ListTable interface {
 
 //TodoTable provide methods for table queries
 type TodoTable interface {
+	GetTodo(id int) (model.Todo, error)
 	GetAllTodos() (model.TodoCollection, error)
 	GetAllTodosForUser(user model.User) (model.TodoCollection, error)
 	GetAllTodosForUserList(user model.User, list model.List) (model.TodoCollection, error)

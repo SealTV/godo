@@ -37,7 +37,7 @@ func TestServerRegister(t *testing.T) {
 			args:    args{e},
 			wantErr: false,
 			user: model.User{
-				Id:           2,
+				ID:           2,
 				Login:        "Jon",
 				Email:        "jon@mail.com",
 				Password:     "pass",
@@ -50,7 +50,7 @@ func TestServerRegister(t *testing.T) {
 			args:    args{e},
 			wantErr: true,
 			user: model.User{
-				Id:           2,
+				ID:           2,
 				Login:        "Jon",
 				Email:        "jon@mail.com",
 				Password:     "pass",
@@ -80,7 +80,7 @@ func TestServerRegister(t *testing.T) {
 					if err := json.Unmarshal(rec.Body.Bytes(), &result); err != nil {
 						t.Error(fmt.Errorf("fail"))
 					}
-					assert.Equal(t, tt.user.Id, result.Id)
+					assert.Equal(t, tt.user.ID, result.ID)
 					assert.Equal(t, tt.user.Login, result.Login)
 					assert.Equal(t, tt.user.Email, result.Email)
 					assert.Equal(t, tt.user.Password, result.Password)
@@ -108,7 +108,7 @@ func TestServerLogin(t *testing.T) {
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{
-				Id:           1,
+				ID:           1,
 				Login:        "SealTV",
 				Email:        "seal@test.com",
 				Password:     "pass",
@@ -121,7 +121,7 @@ func TestServerLogin(t *testing.T) {
 			args:    args{echo.New()},
 			wantErr: true,
 			user: model.User{
-				Id:           2,
+				ID:           2,
 				Login:        "Jonn",
 				Email:        "jonn@mail.com",
 				Password:     "passs",
@@ -183,7 +183,7 @@ func TestServerMainJwt(t *testing.T) {
 			args:    args{echo.New()},
 			wantErr: false,
 			user: model.User{
-				Id:           1,
+				ID:           1,
 				Login:        "SealTV",
 				Email:        "seal@test.com",
 				Password:     "pass",

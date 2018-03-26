@@ -22,20 +22,20 @@ func (db *pgConnector) GetUserModel(id int) (model.UserModel, error) {
 		var listID int
 		var listName string
 		var todo model.Todo
-		todo.UserId = user.Id
+		todo.UserID = user.ID
 
-		err := rows.Scan(&listID, &listName, &todo.Id, &todo.Title, &todo.Description, &todo.IsActive, &todo.DateCreate)
+		err := rows.Scan(&listID, &listName, &todo.ID, &todo.Title, &todo.Description, &todo.IsActive, &todo.DateCreate)
 		if err != nil {
 			return userModel, err
 		}
-		todo.ListId = listID
+		todo.ListID = listID
 
 		list, ok := lists[listID]
 		if !ok {
 			list.List = model.List{
-				Id:     listID,
+				ID:     listID,
 				Name:   listName,
-				UserId: user.Id,
+				UserID: user.ID,
 			}
 		}
 
@@ -49,7 +49,7 @@ func (db *pgConnector) GetUserModel(id int) (model.UserModel, error) {
 
 	for i := 0; i < len(userModel.TodoLists)-1; i++ {
 		for j := i + 1; j < len(userModel.TodoLists); j++ {
-			if userModel.TodoLists[i].Id > userModel.TodoLists[j].Id {
+			if userModel.TodoLists[i].ID > userModel.TodoLists[j].ID {
 				userModel.TodoLists[i], userModel.TodoLists[j] = userModel.TodoLists[j], userModel.TodoLists[i]
 			}
 		}

@@ -28,8 +28,8 @@ func TestGetAllLists(t *testing.T) {
 			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
-				model.List{Id: 2, Name: "Some name 2", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
+				model.List{ID: 2, Name: "Some name 2", UserID: 1},
 			},
 			wantErr: false,
 		},
@@ -37,7 +37,7 @@ func TestGetAllLists(t *testing.T) {
 			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
 			},
 			wantErr: true,
 		},
@@ -50,7 +50,7 @@ func TestGetAllLists(t *testing.T) {
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "name", "user_id"})
 				for _, list := range tt.want {
-					rs = rs.AddRow(list.Id, list.Name, list.UserId)
+					rs = rs.AddRow(list.ID, list.Name, list.UserID)
 				}
 
 				expectQuery.WillReturnRows(rs)
@@ -93,33 +93,33 @@ func TestGetAllListsForUser(t *testing.T) {
 		{name: "1",
 			db:   &pgConnector{db},
 			mock: mock,
-			args: args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args: args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
-				model.List{Id: 2, Name: "Some name 2", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
+				model.List{ID: 2, Name: "Some name 2", UserID: 1},
 			},
 			wantErr: false,
 		},
 		{name: "2",
 			db:   &pgConnector{db},
 			mock: mock,
-			args: args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args: args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
-				model.List{Id: 2, Name: "Some name 2", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
+				model.List{ID: 2, Name: "Some name 2", UserID: 1},
 			},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectQuery := tt.mock.ExpectQuery("SELECT  (.+) FROM lists WHERE (.+)").WithArgs(tt.args.user.Id)
+			expectQuery := tt.mock.ExpectQuery("SELECT  (.+) FROM lists WHERE (.+)").WithArgs(tt.args.user.ID)
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "name", "user_id"})
 				for _, list := range tt.want {
-					rs = rs.AddRow(list.Id, list.Name, list.UserId)
+					rs = rs.AddRow(list.ID, list.Name, list.UserID)
 				}
 
 				expectQuery.WillReturnRows(rs)
@@ -163,8 +163,8 @@ func TestGetAllListsForUserId(t *testing.T) {
 			mock: mock,
 			args: args{user: 1},
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
-				model.List{Id: 2, Name: "Some name 2", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
+				model.List{ID: 2, Name: "Some name 2", UserID: 1},
 			},
 			wantErr: false,
 		},
@@ -173,8 +173,8 @@ func TestGetAllListsForUserId(t *testing.T) {
 			mock: mock,
 			args: args{user: 1},
 			want: []model.List{
-				model.List{Id: 1, Name: "Some name 1", UserId: 1},
-				model.List{Id: 2, Name: "Some name 2", UserId: 1},
+				model.List{ID: 1, Name: "Some name 1", UserID: 1},
+				model.List{ID: 2, Name: "Some name 2", UserID: 1},
 			},
 			wantErr: true,
 		},
@@ -187,7 +187,7 @@ func TestGetAllListsForUserId(t *testing.T) {
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "name", "user_id"})
 				for _, list := range tt.want {
-					rs = rs.AddRow(list.Id, list.Name, list.UserId)
+					rs = rs.AddRow(list.ID, list.Name, list.UserID)
 				}
 
 				expectQuery.WillReturnRows(rs)
@@ -230,14 +230,14 @@ func TestGetListById(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
-			want:    model.List{Id: 1, Name: "Some name 1", UserId: 1},
+			want:    model.List{ID: 1, Name: "Some name 1", UserID: 1},
 			wantErr: false,
 		},
 		{name: "2",
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
-			want:    model.List{Id: 1, Name: "Some name 1", UserId: 1},
+			want:    model.List{ID: 1, Name: "Some name 1", UserID: 1},
 			wantErr: true,
 		},
 	}
@@ -247,7 +247,7 @@ func TestGetListById(t *testing.T) {
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
-				rs := sqlmock.NewRows([]string{"id", "name", "user_id"}).AddRow(tt.want.Id, tt.want.Name, tt.want.UserId)
+				rs := sqlmock.NewRows([]string{"id", "name", "user_id"}).AddRow(tt.want.ID, tt.want.Name, tt.want.UserID)
 
 				expectQuery.WillReturnRows(rs)
 			}
@@ -289,28 +289,28 @@ func TestAddList(t *testing.T) {
 			name:    "1",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
-			want:    model.List{Id: 1, Name: "Some list", UserId: 1},
+			args:    args{list: model.List{ID: 1, Name: "Some list", UserID: 1}},
+			want:    model.List{ID: 1, Name: "Some list", UserID: 1},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
-			want:    model.List{Id: 1, Name: "Some list", UserId: 1},
+			args:    args{list: model.List{ID: 1, Name: "Some list", UserID: 1}},
+			want:    model.List{ID: 1, Name: "Some list", UserID: 1},
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			expectQuery := tt.mock.ExpectQuery("INSERT INTO lists((.+)) VALUES((.+)) RETURNING (.+)").
-				WithArgs(tt.args.list.Name, tt.args.list.UserId)
+				WithArgs(tt.args.list.Name, tt.args.list.UserID)
 
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
-				rs := sqlmock.NewRows([]string{"id"}).AddRow(tt.want.Id)
+				rs := sqlmock.NewRows([]string{"id"}).AddRow(tt.want.ID)
 				expectQuery.WillReturnRows(rs)
 			}
 
@@ -350,21 +350,21 @@ func TestUpdateList(t *testing.T) {
 		{name: "1",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
+			args:    args{list: model.List{ID: 1, Name: "Some list", UserID: 1}},
 			want:    1,
 			wantErr: false,
 		},
 		{name: "2",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{list: model.List{Id: 1, Name: "Some list", UserId: 1}},
+			args:    args{list: model.List{ID: 1, Name: "Some list", UserID: 1}},
 			want:    1,
 			wantErr: true,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			expectExec := tt.mock.ExpectExec("UPDATE lists SET (.+) WHERE (.+)").WithArgs(tt.args.list.Id, tt.args.list.Name, tt.args.list.UserId)
+			expectExec := tt.mock.ExpectExec("UPDATE lists SET (.+) WHERE (.+)").WithArgs(tt.args.list.ID, tt.args.list.Name, tt.args.list.UserID)
 			if tt.wantErr {
 				expectExec.WillReturnError(fmt.Errorf("Some error"))
 			} else {
@@ -409,7 +409,7 @@ func TestDeleteList(t *testing.T) {
 		{name: "1",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
+			args:     args{list: model.List{ID: 1, Name: "Some name 1", UserID: 1}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: false,
@@ -418,7 +418,7 @@ func TestDeleteList(t *testing.T) {
 		{name: "2",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
+			args:     args{list: model.List{ID: 1, Name: "Some name 1", UserID: 1}},
 			want:     1,
 			wantErr1: true,
 			wantErr2: false,
@@ -427,7 +427,7 @@ func TestDeleteList(t *testing.T) {
 		{name: "3",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
+			args:     args{list: model.List{ID: 1, Name: "Some name 1", UserID: 1}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: true,
@@ -436,7 +436,7 @@ func TestDeleteList(t *testing.T) {
 		{name: "4",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{list: model.List{Id: 1, Name: "Some name 1", UserId: 1}},
+			args:     args{list: model.List{ID: 1, Name: "Some name 1", UserID: 1}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: false,
@@ -446,12 +446,12 @@ func TestDeleteList(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock.ExpectBegin()
-			expectExec := tt.mock.ExpectExec(`DELETE FROM todos WHERE (.+)`).WithArgs(tt.args.list.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+			expectExec := tt.mock.ExpectExec(`DELETE FROM todos WHERE (.+)`).WithArgs(tt.args.list.ID).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
 			if tt.wantErr1 {
 				expectExec.WillReturnError(fmt.Errorf("Some error"))
 				tt.mock.ExpectRollback()
 			} else {
-				expectExec = tt.mock.ExpectExec("DELETE FROM lists WHERE (.+)").WithArgs(tt.args.list.Id)
+				expectExec = tt.mock.ExpectExec("DELETE FROM lists WHERE (.+)").WithArgs(tt.args.list.ID)
 				if tt.wantErr2 {
 					expectExec.WillReturnError(fmt.Errorf("Some error"))
 					tt.mock.ExpectRollback()

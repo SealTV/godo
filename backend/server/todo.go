@@ -52,7 +52,7 @@ func (s *Server) deleteTodo(c echo.Context) error {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
 
-	todosDelete, err := s.db.DeleteTodoById(todo.Id)
+	todosDelete, err := s.db.DeleteTodoById(todo.ID)
 	if err != nil {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}

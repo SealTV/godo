@@ -39,7 +39,7 @@ func (s *Service) payloadFunc(username string) map[string]interface{} {
 	}
 
 	m := make(map[string]interface{})
-	m["userId"] = u.Id
+	m["userId"] = u.ID
 	m["login"] = u.Login
 	m["email"] = u.Email
 	return m
@@ -50,10 +50,7 @@ func (s *Service) authorizator(userID string, c *gin.Context) bool {
 }
 
 func (s *Service) unauthorized(c *gin.Context, code int, message string) {
-	c.JSON(code, gin.H{
-		"code":    code,
-		"message": message,
-	})
+	c.JSON(code, gin.H{"error": message})
 }
 
 func (s *Service) register(c *gin.Context) {

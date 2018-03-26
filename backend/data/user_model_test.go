@@ -35,51 +35,51 @@ func TestGetUserModel(t *testing.T) {
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{
-				User: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+				User: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 				TodoLists: []model.TodoListModel{
 					model.TodoListModel{
-						List: model.List{Id: 1, Name: "Some name 1", UserId: 1},
+						List: model.List{ID: 1, Name: "Some name 1", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          1,
+								ID:          1,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 							model.Todo{
-								Id:          2,
+								ID:          2,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 						},
 					},
 					model.TodoListModel{
-						List: model.List{Id: 2, Name: "Some name 2", UserId: 1},
+						List: model.List{ID: 2, Name: "Some name 2", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          3,
+								ID:          3,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 							model.Todo{
-								Id:          4,
+								ID:          4,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 						},
 					},
@@ -94,51 +94,51 @@ func TestGetUserModel(t *testing.T) {
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{
-				User: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+				User: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 				TodoLists: []model.TodoListModel{
 					model.TodoListModel{
-						List: model.List{Id: 1, Name: "Some name 1", UserId: 1},
+						List: model.List{ID: 1, Name: "Some name 1", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          1,
+								ID:          1,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 							model.Todo{
-								Id:          2,
+								ID:          2,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 						},
 					},
 					model.TodoListModel{
-						List: model.List{Id: 2, Name: "Some name 2", UserId: 1},
+						List: model.List{ID: 2, Name: "Some name 2", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          3,
+								ID:          3,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 							model.Todo{
-								Id:          4,
+								ID:          4,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 						},
 					},
@@ -153,51 +153,51 @@ func TestGetUserModel(t *testing.T) {
 			mock: mock,
 			args: args{id: 1},
 			want: model.UserModel{
-				User: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+				User: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 				TodoLists: []model.TodoListModel{
 					model.TodoListModel{
-						List: model.List{Id: 1, Name: "Some name 1", UserId: 1},
+						List: model.List{ID: 1, Name: "Some name 1", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          1,
+								ID:          1,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 							model.Todo{
-								Id:          2,
+								ID:          2,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      1,
+								UserID:      1,
+								ListID:      1,
 							},
 						},
 					},
 					model.TodoListModel{
-						List: model.List{Id: 2, Name: "Some name 2", UserId: 1},
+						List: model.List{ID: 2, Name: "Some name 2", UserID: 1},
 						Todos: []model.Todo{
 							model.Todo{
-								Id:          3,
+								ID:          3,
 								Title:       "title",
 								Description: "description",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 							model.Todo{
-								Id:          4,
+								ID:          4,
 								Title:       "title1",
 								Description: "description1",
 								IsActive:    true,
 								DateCreate:  time.Time{},
-								UserId:      1,
-								ListId:      2,
+								UserID:      1,
+								ListID:      2,
 							},
 						},
 					},
@@ -214,7 +214,7 @@ func TestGetUserModel(t *testing.T) {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"}).
-					AddRow(tt.want.Id, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
+					AddRow(tt.want.ID, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
 				expectQuery.WillReturnRows(rs)
 
 				expectQuery := tt.mock.ExpectQuery(`SELECT (.+) FROM lists AS list LEFT JOIN todos AS todo ON (.+) WHERE (.+)`).WithArgs(tt.args.id)
@@ -224,7 +224,7 @@ func TestGetUserModel(t *testing.T) {
 					rs := sqlmock.NewRows([]string{"list.id", "list.name", "todo.id", "todo.title", "todo.description", "todo.is_active", "todo.date_create"})
 					for _, list := range tt.want.TodoLists {
 						for _, todo := range list.Todos {
-							rs = rs.AddRow(list.Id, list.Name, todo.Id, todo.Title, todo.Description, todo.IsActive, todo.DateCreate)
+							rs = rs.AddRow(list.ID, list.Name, todo.ID, todo.Title, todo.Description, todo.IsActive, todo.DateCreate)
 						}
 					}
 

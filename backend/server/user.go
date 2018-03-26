@@ -13,7 +13,7 @@ func (s *Server) getUser(c echo.Context) error {
 		return sendResponse(c, http.StatusFailedDependency, nil, err)
 	}
 
-	user, err := s.db.GetUserById(u.Id)
+	user, err := s.db.GetUserById(u.ID)
 	if err != nil {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}
@@ -27,7 +27,7 @@ func (s *Server) getUserModel(c echo.Context) error {
 		return sendResponse(c, http.StatusFailedDependency, nil, err)
 	}
 
-	user, err := s.db.GetUserModel(u.Id)
+	user, err := s.db.GetUserModel(u.ID)
 	if err != nil {
 		return sendResponse(c, http.StatusBadRequest, nil, err)
 	}

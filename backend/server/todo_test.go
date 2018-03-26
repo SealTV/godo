@@ -31,13 +31,13 @@ func TestServer_getTodos(t *testing.T) {
 		{
 			name:    "1",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: 1, Login: "SealTV", Email: "seal@test.com", Password: "pass", RegisterDate: time.Now()}},
 			wantErr: false,
 		},
 		{
 			name:    "2",
 			s:       &Server{db: data.New(data.Config{UserDebugDB: true})},
-			args:    args{e, model.User{Id: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
+			args:    args{e, model.User{ID: -2, Login: "Empty", Email: "emty@test.com", Password: "passEmpty", RegisterDate: time.Now()}},
 			wantErr: true,
 		},
 	}
@@ -82,11 +82,11 @@ func TestServer_addTodo(t *testing.T) {
 			name: "1",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          2,
+				ID:          2,
 				Title:       "todo2",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      1,
+				ListID:      1,
+				UserID:      1,
 			}},
 			wantErr: false,
 		},
@@ -94,11 +94,11 @@ func TestServer_addTodo(t *testing.T) {
 			name: "2",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          1,
+				ID:          1,
 				Title:       "todo1",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      -1,
+				ListID:      1,
+				UserID:      -1,
 			}},
 			wantErr: true,
 		},
@@ -123,8 +123,8 @@ func TestServer_addTodo(t *testing.T) {
 
 					assert.Equal(t, tt.args.todo.Title, result.Title)
 					assert.Equal(t, tt.args.todo.Description, result.Description)
-					assert.Equal(t, tt.args.todo.UserId, result.UserId)
-					assert.Equal(t, tt.args.todo.ListId, result.ListId)
+					assert.Equal(t, tt.args.todo.UserID, result.UserID)
+					assert.Equal(t, tt.args.todo.ListID, result.ListID)
 				}
 			}
 		})
@@ -147,11 +147,11 @@ func TestServer_updateTodo(t *testing.T) {
 			name: "1",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          2,
+				ID:          2,
 				Title:       "todo2",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      1,
+				ListID:      1,
+				UserID:      1,
 			}},
 			wantErr: false,
 		},
@@ -159,11 +159,11 @@ func TestServer_updateTodo(t *testing.T) {
 			name: "2",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          1,
+				ID:          1,
 				Title:       "todo1",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      -1,
+				ListID:      1,
+				UserID:      -1,
 			}},
 			wantErr: true,
 		},
@@ -204,11 +204,11 @@ func TestServer_deleteTodo(t *testing.T) {
 			name: "1",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          2,
+				ID:          2,
 				Title:       "todo2",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      1,
+				ListID:      1,
+				UserID:      1,
 			}},
 			wantErr: false,
 		},
@@ -216,11 +216,11 @@ func TestServer_deleteTodo(t *testing.T) {
 			name: "2",
 			s:    &Server{db: data.New(data.Config{UserDebugDB: true})},
 			args: args{e, model.Todo{
-				Id:          1,
+				ID:          1,
 				Title:       "todo1",
 				Description: "Todo desc",
-				ListId:      1,
-				UserId:      -1,
+				ListID:      1,
+				UserID:      -1,
 			}},
 			wantErr: true,
 		},

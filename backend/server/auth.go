@@ -115,7 +115,7 @@ func createJwtToken(user model.User) (string, error) {
 		user.Login,
 		false,
 		jwt.StandardClaims{
-			Id:        fmt.Sprint(user.Id),
+			Id:        fmt.Sprint(user.ID),
 			ExpiresAt: time.Now().Add(24 * time.Hour).Unix(),
 		},
 	}

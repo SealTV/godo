@@ -18,7 +18,7 @@ func (db *pgConnector) GetAllLists() (model.ListsCollection, error) {
 
 // GetAllListsForUser return user lists
 func (db *pgConnector) GetAllListsForUser(user model.User) (model.ListsCollection, error) {
-	return db.GetAllListsForUserId(user.Id)
+	return db.GetAllListsForUserId(user.ID)
 }
 
 // GetAllListsForUserId return user lists
@@ -33,7 +33,7 @@ func (db *pgConnector) GetAllListsForUserId(user int) (model.ListsCollection, er
 
 func (db *pgConnector) GetListById(id int) (model.List, error) {
 	var list model.List
-	err := db.QueryRow(`SELECT * FROM lists WHERE id = $1`, id).Scan(&list.Id, &list.Name, &list.UserId)
+	err := db.QueryRow(`SELECT * FROM lists WHERE id = $1`, id).Scan(&list.ID, &list.Name, &list.UserID)
 	if err != nil {
 		return list, err
 	}
@@ -42,7 +42,7 @@ func (db *pgConnector) GetListById(id int) (model.List, error) {
 }
 
 func (db *pgConnector) AddList(list model.List) (model.List, error) {
-	err := db.QueryRow(`INSERT INTO lists(name, user_id) VALUES($1, $2) RETURNING id`, list.Name, list.UserId).Scan(&list.Id)
+	err := db.QueryRow(`INSERT INTO lists(name, user_id) VALUES($1, $2) RETURNING id`, list.Name, list.UserID).Scan(&list.ID)
 	if err != nil {
 		return list, err
 	}
@@ -53,7 +53,7 @@ func (db *pgConnector) AddList(list model.List) (model.List, error) {
 func (db *pgConnector) UpdateList(list model.List) (int64, error) {
 	r, err := db.Exec(
 		`UPDATE lists SET name = $2, user_id = $3 WHERE id = $1`,
-		list.Id, list.Name, list.UserId)
+		list.ID, list.Name, list.UserID)
 	if err != nil {
 		return 0, err
 	}
@@ -61,7 +61,7 @@ func (db *pgConnector) UpdateList(list model.List) (int64, error) {
 }
 
 func (db *pgConnector) DeleteList(list model.List) (int64, error) {
-	return db.DeleteListById(list.Id)
+	return db.DeleteListById(list.ID)
 }
 
 func (db *pgConnector) DeleteListById(list int) (int64, error) {
@@ -89,7 +89,7 @@ func parseListsRows(rows *sql.Rows) (model.ListsCollection, error) {
 	for rows.Next() {
 		list := model.List{}
 
-		err := rows.Scan(&list.Id, &list.Name, &list.UserId)
+		err := rows.Scan(&list.ID, &list.Name, &list.UserID)
 		if err != nil {
 			return nil, err
 		}

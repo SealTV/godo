@@ -28,8 +28,8 @@ func TestGetAllUsers(t *testing.T) {
 			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.User{
-				model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
-				model.User{Id: 2, Email: "some2@email.com", Login: "SomeLogin2", Password: "Some pass", RegisterDate: time.Now()},
+				model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+				model.User{ID: 2, Email: "some2@email.com", Login: "SomeLogin2", Password: "Some pass", RegisterDate: time.Now()},
 			},
 			wantErr: false,
 		},
@@ -37,7 +37,7 @@ func TestGetAllUsers(t *testing.T) {
 			db:   &pgConnector{db},
 			mock: mock,
 			want: []model.User{
-				model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+				model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			},
 			wantErr: true,
 		},
@@ -50,7 +50,7 @@ func TestGetAllUsers(t *testing.T) {
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"})
 				for _, user := range tt.want {
-					rs = rs.AddRow(user.Id, user.Login, user.Password, user.Email, user.RegisterDate)
+					rs = rs.AddRow(user.ID, user.Login, user.Password, user.Email, user.RegisterDate)
 				}
 
 				expectQuery.WillReturnRows(rs)
@@ -95,14 +95,14 @@ func TestGetUserById(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 1},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{name: "2",
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{id: 2},
-			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: true,
 		},
 	}
@@ -113,7 +113,7 @@ func TestGetUserById(t *testing.T) {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"}).
-					AddRow(tt.want.Id, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
+					AddRow(tt.want.ID, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
 				expectQuery.WillReturnRows(rs)
 			}
 
@@ -158,7 +158,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -166,7 +166,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "some1@email.com", password: "Some pass"},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -174,7 +174,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1", password: "Some pass"},
-			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: true,
 		},
 	}
@@ -187,7 +187,7 @@ func TestGetUserByLoginAndPassword(t *testing.T) {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"}).
-					AddRow(tt.want.Id, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
+					AddRow(tt.want.ID, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
 				expectQuery.WillReturnRows(rs)
 			}
 
@@ -230,7 +230,7 @@ func TestGetUserByLogin(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1"},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -238,7 +238,7 @@ func TestGetUserByLogin(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "some1@email.com"},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -246,7 +246,7 @@ func TestGetUserByLogin(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{login: "SomeLogin1"},
-			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: true,
 		},
 	}
@@ -259,7 +259,7 @@ func TestGetUserByLogin(t *testing.T) {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
 				rs := sqlmock.NewRows([]string{"id", "login", "password", "email", "register_date"}).
-					AddRow(tt.want.Id, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
+					AddRow(tt.want.ID, tt.want.Login, tt.want.Password, tt.want.Email, tt.want.RegisterDate)
 				expectQuery.WillReturnRows(rs)
 			}
 
@@ -302,7 +302,7 @@ func TestAddUser(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -310,7 +310,7 @@ func TestAddUser(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
-			want:    model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: false,
 		},
 		{
@@ -318,7 +318,7 @@ func TestAddUser(t *testing.T) {
 			db:      &pgConnector{db},
 			mock:    mock,
 			args:    args{user: model.User{Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass"}},
-			want:    model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
+			want:    model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()},
 			wantErr: true,
 		},
 	}
@@ -330,7 +330,7 @@ func TestAddUser(t *testing.T) {
 			if tt.wantErr {
 				expectQuery.WillReturnError(fmt.Errorf("Some error"))
 			} else {
-				rs := sqlmock.NewRows([]string{"id", "register_date"}).AddRow(tt.want.Id, tt.want.RegisterDate)
+				rs := sqlmock.NewRows([]string{"id", "register_date"}).AddRow(tt.want.ID, tt.want.RegisterDate)
 				expectQuery.WillReturnRows(rs)
 			}
 
@@ -373,7 +373,7 @@ func TestUpdateUser(t *testing.T) {
 			name:    "1",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
 			wantErr: false,
 		},
@@ -381,7 +381,7 @@ func TestUpdateUser(t *testing.T) {
 			name:    "2",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
 			wantErr: false,
 		},
@@ -389,7 +389,7 @@ func TestUpdateUser(t *testing.T) {
 			name:    "3",
 			db:      &pgConnector{db},
 			mock:    mock,
-			args:    args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:    args{user: model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:    1,
 			wantErr: true,
 		},
@@ -397,7 +397,7 @@ func TestUpdateUser(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			expectExec := tt.mock.ExpectExec(`UPDATE users SET (.+) WHERE (.+)`).
-				WithArgs(tt.args.user.Id, tt.args.user.Login, tt.args.user.Password, tt.args.user.Email)
+				WithArgs(tt.args.user.ID, tt.args.user.Login, tt.args.user.Password, tt.args.user.Email)
 
 			if tt.wantErr {
 				expectExec.WillReturnError(fmt.Errorf("Some error"))
@@ -447,7 +447,7 @@ func TestDeleteUser(t *testing.T) {
 			name:     "1",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:     args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
 			wantErr1: true,
 			wantErr2: false,
@@ -458,7 +458,7 @@ func TestDeleteUser(t *testing.T) {
 			name:     "2",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:     args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: true,
@@ -469,7 +469,7 @@ func TestDeleteUser(t *testing.T) {
 			name:     "3",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:     args{user: model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: false,
@@ -480,7 +480,7 @@ func TestDeleteUser(t *testing.T) {
 			name:     "4",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{user: model.User{Id: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:     args{user: model.User{ID: 2, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: false,
@@ -491,7 +491,7 @@ func TestDeleteUser(t *testing.T) {
 			name:     "5",
 			db:       &pgConnector{db},
 			mock:     mock,
-			args:     args{user: model.User{Id: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
+			args:     args{user: model.User{ID: 1, Email: "some1@email.com", Login: "SomeLogin1", Password: "Some pass", RegisterDate: time.Now()}},
 			want:     1,
 			wantErr1: false,
 			wantErr2: false,
@@ -503,17 +503,17 @@ func TestDeleteUser(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.mock.ExpectBegin()
 
-			expectExec := tt.mock.ExpectExec(`DELETE FROM todos WHERE (.+)`).WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+			expectExec := tt.mock.ExpectExec(`DELETE FROM todos WHERE (.+)`).WithArgs(tt.args.user.ID).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
 			if tt.wantErr1 {
 				expectExec.WillReturnError(fmt.Errorf("Some error"))
 				tt.mock.ExpectRollback()
 			} else {
-				expectExec := tt.mock.ExpectExec("DELETE FROM lists WHERE (.+)").WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+				expectExec := tt.mock.ExpectExec("DELETE FROM lists WHERE (.+)").WithArgs(tt.args.user.ID).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
 				if tt.wantErr2 {
 					expectExec.WillReturnError(fmt.Errorf("Some error"))
 					tt.mock.ExpectRollback()
 				} else {
-					expectExec := tt.mock.ExpectExec(`DELETE FROM users WHERE (.+)`).WithArgs(tt.args.user.Id).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
+					expectExec := tt.mock.ExpectExec(`DELETE FROM users WHERE (.+)`).WithArgs(tt.args.user.ID).WillReturnResult(sqlmock.NewResult(tt.want, tt.want))
 					if tt.wantErr3 {
 						expectExec.WillReturnError(fmt.Errorf("Some error"))
 						tt.mock.ExpectRollback()
