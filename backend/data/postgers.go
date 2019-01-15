@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"log"
 
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 	// init postgres sql lib
 	_ "github.com/lib/pq"
 )

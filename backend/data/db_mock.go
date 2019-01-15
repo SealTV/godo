@@ -5,7 +5,7 @@ import (
 	"log"
 	"time"
 
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 )
 
 type dbMock struct {

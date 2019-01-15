@@ -3,7 +3,7 @@ package service
 import (
 	"net/http"
 
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"

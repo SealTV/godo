@@ -1,7 +1,7 @@
 package data
 
 import (
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 )
 
 func (db *pgConnector) GetUserModel(id int) (model.UserModel, error) {

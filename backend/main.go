@@ -6,8 +6,8 @@ import (
 	"log"
 	"os"
 
-	"bitbucket.org/SealTV/go-site/backend/data"
-	"bitbucket.org/SealTV/go-site/backend/service"
+	"github.com/SealTV/godo/data"
+	"github.com/SealTV/godo/service"
 )
 
 var configFile = flag.String("config", "config.json", "Config file name")

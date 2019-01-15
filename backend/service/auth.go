@@ -6,7 +6,7 @@ import (
 	"log"
 	"net/http"
 
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 
 	jwt "github.com/appleboy/gin-jwt"
 	"github.com/gin-gonic/gin"
@@ -20,16 +20,19 @@ type (
 	}
 )
 
-func (s *Service) authenticator(username string, password string, c *gin.Context) (string, bool) {
+func (s *Service) authenticator(c *gin.Context) (interface{}, error) {
+	var username string
+	var password string
 	_, err := s.db.GetUserByLoginAndPassword(username, password)
 	if err != nil {
-		return username, false
+		return username, nil
 	}
 
-	return username, true
+	return username, nil
 }
 
-func (s *Service) payloadFunc(username string) map[string]interface{} {
+func (s *Service) payloadFunc(data interface{}) jwt.MapClaims {
+	var username string
 	log.Println("username:", username)
 	u, err := s.db.GetUserByLogin(username)
 	log.Println("User", u)
@@ -45,7 +48,7 @@ func (s *Service) payloadFunc(username string) map[string]interface{} {
 	return m
 }
 
-func (s *Service) authorizator(userID string, c *gin.Context) bool {
+func (s *Service) authorizator(data interface{}, c *gin.Context) bool {
 	return true
 }
 

@@ -10,8 +10,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"bitbucket.org/SealTV/go-site/backend/data"
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/data"
+	"github.com/SealTV/godo/model"
 	"github.com/labstack/echo"
 	"github.com/stretchr/testify/assert"
 )

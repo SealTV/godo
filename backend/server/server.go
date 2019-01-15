@@ -3,7 +3,7 @@ package server
 import (
 	"fmt"
 
-	"bitbucket.org/SealTV/go-site/backend/data"
+	"github.com/SealTV/godo/data"
 	"github.com/labstack/echo"
 	"github.com/labstack/echo/middleware"
 )

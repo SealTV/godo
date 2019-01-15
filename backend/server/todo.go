@@ -3,7 +3,7 @@ package server
 import (
 	"net/http"
 
-	"bitbucket.org/SealTV/go-site/backend/model"
+	"github.com/SealTV/godo/model"
 	"github.com/labstack/echo"
 )
 
