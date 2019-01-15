@@ -3,7 +3,7 @@
 # Only use spaces to indent your .yml configuration.
 # -----
 # You can specify a custom docker image from Docker Hub as your build environment.
-image: golang:1.7
+image: golang:1.9
 
 pipelines:
   default:
@@ -13,13 +13,14 @@ pipelines:
           - mkdir -pv "${PACKAGE_PATH}"
           - tar -cO --exclude-vcs --exclude=bitbucket-pipelines.yml . | tar -xv -C "${PACKAGE_PATH}"
           - cd "${PACKAGE_PATH}"
-          - go get -v
+
+          - go get -v github.com/lib/pq
           - go get -v github.com/DATA-DOG/go-sqlmock
           - go get -v gopkg.in/DATA-DOG/go-sqlmock.v1
           - go get -v github.com/stretchr/testify/assert
-          - go build -v
-          - go test -v
-          - go test -v bitbucket.org/SealTV/go-site/tools
-          - go test -v bitbucket.org/SealTV/go-site/data
-          - go test -v bitbucket.org/SealTV/go-site/server
-          - go test -bench=.  bitbucket.org/SealTV/go-site/tools
+          - go get -v github.com/appleboy/gin-jwt
+          - go get -v github.com/gin-contrib/cors
+          - go get -v github.com/gin-gonic/gin
+
+          - go build -v backend/*.go
+          - go test -v bitbucket.org/SealTV/go-site/backend/data

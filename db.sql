@@ -1,21 +1,21 @@
 -- Database: todo_db
 
---  DROP DATABASE todo_db;
+-- DROP DATABASE IF EXISTS todo_db;
 
-CREATE DATABASE todo_db
-    WITH 
-    OWNER = postgres
-    ENCODING = 'UTF8'
-    LC_COLLATE = 'en_US.utf8'
-    LC_CTYPE = 'en_US.utf8'
-    TABLESPACE = pg_default
-    CONNECTION LIMIT = -1;
+-- CREATE DATABASE todo_db
+--     WITH 
+--     OWNER = postgres
+--     ENCODING = 'UTF8'
+--     LC_COLLATE = 'en_US.utf8'
+--     LC_CTYPE = 'en_US.utf8'
+--     TABLESPACE = pg_default
+--     CONNECTION LIMIT = -1;
 	
 -- SCHEMA: public
 
--- DROP SCHEMA public ;
+-- DROP SCHEMA IF EXISTS public;
 
-CREATE SCHEMA public
+CREATE SCHEMA IF NOT EXISTS public
     AUTHORIZATION postgres;
 
 COMMENT ON SCHEMA public
@@ -30,7 +30,7 @@ GRANT ALL ON SCHEMA public TO PUBLIC;
 -- create sequence users_id_seq;
 -- drop sequence if exists lists_id_seq;
 -- create sequence lists_id_seq;
-CREATE SEQUENCE public.lists_id_seq
+CREATE SEQUENCE IF NOT EXISTS public.lists_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -40,7 +40,7 @@ CREATE SEQUENCE public.lists_id_seq
 ALTER SEQUENCE public.lists_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.todos_id_seq
+CREATE SEQUENCE IF NOT EXISTS public.todos_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -50,7 +50,7 @@ CREATE SEQUENCE public.todos_id_seq
 ALTER SEQUENCE public.todos_id_seq
     OWNER TO postgres;
 
-CREATE SEQUENCE public.users_id_seq
+CREATE SEQUENCE IF NOT EXISTS public.users_id_seq
     INCREMENT 1
     START 1
     MINVALUE 1
@@ -64,7 +64,7 @@ ALTER SEQUENCE public.users_id_seq
 
 -- DROP TABLE public.users;
 
-CREATE TABLE public.users
+CREATE TABLE IF NOT EXISTS public.users
 (
     id integer NOT NULL DEFAULT nextval('users_id_seq'::regclass),
     login character varying(128) COLLATE pg_catalog."default" NOT NULL,
