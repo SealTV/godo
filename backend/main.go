@@ -36,5 +36,6 @@ func main() {
 
 	db := data.New(conf.DB)
 	s := service.New(db, conf.Service)
+
 	s.Run()
 }
